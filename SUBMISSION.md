@@ -11,6 +11,18 @@ A test rig for real-time world models: it drives Reactor's models like a player 
 
 **Video demo:** YouTube link for `demo/worldgym-demo.mp4`
 
+YouTube upload (https://www.youtube.com/upload), visibility **Unlisted**:
+
+- Title: `WorldGym: does a world model's world come back?`
+- Description:
+
+  > WorldGym is a test rig for real-time world models on Reactor. It drives the model like a player — walk away, turn around, come back — and scores whether the world is still there.
+  >
+  > Controls work (6 of 6, but 2–3 s late) and standing still holds, but walk or turn away and back and you don't return to the same place.
+  >
+  > Live site: https://worldgym-900.pages.dev
+  > Built at WORLDS | LONDON, 12 Sept 2026.
+
 **Tracks:** Best Use of World Models · Real-Time Interactive (Reactor)
 
 **Built with:** python, reactor, reactor-sdk, opencv, scikit-image, numpy, three.js, webrtc, playwright, cloudflare-pages, ffmpeg

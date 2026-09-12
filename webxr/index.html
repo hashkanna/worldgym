@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WorldXR — stand inside a world model</title>
+<style>
+  html,body{margin:0;height:100%;background:#000;color:#eee;font:14px/1.4 system-ui,-apple-system,sans-serif;overflow:hidden}
+  #ui{position:fixed;left:12px;top:12px;z-index:10;background:rgba(0,0,0,.6);padding:12px 14px;border-radius:10px;max-width:420px;backdrop-filter:blur(6px)}
+  #ui h1{font-size:15px;margin:0 0 6px}
+  #ui label{display:block;margin:6px 0 2px;color:#aaa;font-size:12px}
+  #ui input,#ui select{width:100%;box-sizing:border-box;padding:6px 8px;border-radius:6px;border:1px solid #444;background:#111;color:#eee}
+  #ui button{margin-top:8px;margin-right:6px;padding:8px 12px;border-radius:8px;border:0;background:#2f6feb;color:#fff;font-weight:600;cursor:pointer}
+  #ui button.alt{background:#333}
+  #ui button:disabled{opacity:.5;cursor:default}
+  #log{font:11px/1.35 ui-monospace,Menlo,monospace;color:#9fd;white-space:pre-wrap;max-height:130px;overflow:auto;margin-top:8px}
+  #hud{position:fixed;right:12px;top:12px;z-index:10;background:rgba(0,0,0,.6);padding:8px 10px;border-radius:8px;font:12px ui-monospace,Menlo,monospace;color:#cde}
+  video{position:fixed;inset:0;width:100%;height:100%;object-fit:contain;background:#000}
+  canvas{position:fixed;inset:0}
+  .hidden{display:none !important} /* three.js sets the canvas's display inline */
+  [hidden]{display:none !important}
+</style>
+</head>
+<body>
+<video id="video" autoplay muted playsinline></video>
+<div id="ui">
+  <h1>WorldXR · LingBot World 2 on Reactor</h1>
+  <label>Anchor image</label>
+  <select id="anchor"><option value="anchors/room.jpg">venue room · room.jpg</option><option value="">none · prompt only</option></select>
+  <label>…or upload your own (landscape; overrides the list)</label><input id="file" type="file" accept="image/*">
+  <label>Prompt</label><input id="prompt" value="a quiet residential street at golden hour, photoreal">
+  <label id="mode-label" for="mode" hidden>Head control mode</label>
+  <select id="mode" hidden><option value="look">look (thresholded look_left/right, robust)</option><option value="pose">pose (per-frame camera_pose deltas, experimental)</option></select>
+  <div>
+    <button id="connect">Connect &amp; start</button>
+    <button id="enter" class="alt" disabled hidden>Enter VR</button>
+    <button id="recenter" class="alt" disabled hidden>Recenter</button>
+  </div>
+  <div id="log">keyboard on desktop: W/S/A/D move · arrows look · space = idle</div>
+</div>
+<div id="hud">status: idle</div>
+<script>
+  // No devtools on the headset: surface load/runtime failures in the on-page log.
+  const logError = (m) => { const l = document.getElementById("log"); l.textContent += "\nERROR " + m; l.scrollTop = 1e9; };
+  addEventListener("error", (e) => logError(e.message || (e.target && (e.target.src || e.target.href)) || "resource failed to load"), true);
+  addEventListener("unhandledrejection", (e) => logError("unhandled: " + ((e.reason && e.reason.message) || e.reason)));
+</script>
+
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "@reactor-team/js-sdk": "./vendor/reactor-sdk/index.js",
+  "awaitqueue": "https://esm.sh/awaitqueue@3.3.1",
+  "react": "https://esm.sh/react@18.3.1",
+  "react/jsx-runtime": "https://esm.sh/react@18.3.1/jsx-runtime",
+  "hls.js": "https://esm.sh/hls.js@1.6.0",
+  "mp4box": "https://esm.sh/mp4box@2.4.1"
+} }
+</script>
+<script type="module">
+import * as THREE from "three";
+
+// ---- config -------------------------------------------------------------------------
+// The Reactor JS SDK (v3.0.2) is vendored under ./vendor/reactor-sdk so its wasm loads
+// relative to a URL we control; its small deps come from esm.sh via the import map.
+const MODEL = new URLSearchParams(location.search).get("model") || "reactor/lingbot-world-2";
+const SDK_URL = new URLSearchParams(location.search).get("sdk") || "@reactor-team/js-sdk";
+const DEAD_DEG = 10, MAX_DEG = 35;          // head yaw/pitch dead zone and saturation (look mode)
+const POSE_INTERVAL_MS = 250, MODEL_FPS = 48; // pose mode: batch head deltas every 250ms
+const POSE_YAW_SIGN = 1, POSE_PITCH_SIGN = 1; // flip if the world turns the wrong way in pose mode
+
+const $ = (id) => document.getElementById(id);
+const video = $("video"), hud = $("hud"), logEl = $("log");
+const log = (...a) => { logEl.textContent += "\n" + a.join(" "); logEl.scrollTop = 1e9; console.log(...a); };
+const setHud = (s) => hud.textContent = s;
+
+// Headset-only controls stay hidden on a laptop, where the keyboard drives instead.
+let xrSupported = false;
+(async () => {
+  xrSupported = !!(navigator.xr && await navigator.xr.isSessionSupported("immersive-vr").catch(() => false));
+  for (const id of ["mode-label", "mode", "enter", "recenter"]) $(id).hidden = !xrSupported;
+})();
+
+// ---- reactor session -------------------------------------------------------------
+let reactor = null, ready = false;
+const sent = {};  // dedupe persistent-state commands
+async function cmd(name, params, force = false) {
+  if (!ready) return;
+  const key = JSON.stringify(params);
+  if (!force && sent[name] === key) return;
+  sent[name] = key;
+  try { await reactor.sendCommand(name, params); } catch (e) { log("cmd error", name, e.message || e); }
+}
+
+async function connect() {
+  $("connect").disabled = true;
+  const { Reactor } = await import(SDK_URL);
+  const r = await fetch("/token", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ model: MODEL }) });
+  const tok = await r.json();
+  if (!tok.jwt) { log("token error:", JSON.stringify(tok)); $("connect").disabled = false; return; }
+  reactor = new Reactor({ modelName: MODEL });
+  reactor.on("trackReceived", (name, track) => {
+    if (name !== "main_video" && !String(name).includes("video")) return;
+    video.srcObject = new MediaStream([track]); video.play().catch(() => {});
+    log("video track:", name);
+  });
+  // the SDK has no "command_error" type, so surface anything from the model that looks like a failure
+  reactor.on("message", (m) => { const s = JSON.stringify(m); if (/error|fail|invalid|reject/i.test(s)) log("model:", s.slice(0, 300)); });
+  reactor.on("statusChanged", async (status) => {
+    setHud("status: " + status);
+    if (status !== "ready") return;
+    ready = true;
+    try {
+      // The headset's file picker can't see the Mac's disk, so default to an anchor served next to this page.
+      const upload = $("file").files[0], anchor = $("anchor").value;
+      if (upload || anchor) {
+        const f = upload || await fetch(anchor).then((r) => { if (!r.ok) throw new Error(`anchor fetch ${r.status}`); return r.blob(); });
+        const name = upload ? upload.name : anchor.split("/").pop();
+        log("anchor:", name, `(${f.type || "unknown type"}, ${Math.round(f.size / 1024)} KB)`);
+        // name it explicitly: a bare Blob uploads as "upload", with no extension
+        const ref = await reactor.uploadFile(f, { name });
+        await cmd("set_image", { image: ref }, true);
+      } else log("no anchor image: prompt only");
+      await cmd("set_prompt", { prompt: $("prompt").value }, true);
+      await cmd("set_seed", { seed: 42 }, true);
+      await cmd("start", {}, true);
+      log("started — turn your head (VR) or use the keyboard");
+      $("enter").disabled = !xrSupported;
+      $("recenter").disabled = false;
+    } catch (e) { log("start failed:", e.message || e); }
+  });
+  log("connecting", MODEL, "…");
+  await reactor.connect(tok.jwt);
+}
+$("connect").onclick = () => connect().catch((e) => { log("connect failed:", e.message || e); $("connect").disabled = false; });
+
+// ---- three.js: head-locked video plane -------------------------------------------
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+renderer.xr.enabled = true;
+renderer.xr.setReferenceSpaceType("local");
+renderer.domElement.classList.add("hidden");
+document.body.appendChild(renderer.domElement);
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(70, innerWidth / innerHeight, 0.05, 50);
+scene.add(camera);
+const tex = new THREE.VideoTexture(video); tex.colorSpace = THREE.SRGBColorSpace;
+const dist = 2.0, planeW = 2 * dist * Math.tan(THREE.MathUtils.degToRad(38)), planeH = planeW * 960 / 1664;
+const plane = new THREE.Mesh(new THREE.PlaneGeometry(planeW, planeH), new THREE.MeshBasicMaterial({ map: tex, toneMapped: false }));
+plane.position.set(0, 0, -dist);
+camera.add(plane); // head-locked: the video always fills your view; your head drives the model's camera instead
+addEventListener("resize", () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
+
+// ---- head -> commands ---------------------------------------------------------------
+const euler = new THREE.Euler(0, 0, 0, "YXZ");
+let center = { yaw: 0, pitch: 0 }, prevYaw = null, prevPitch = null, accYaw = 0, accPitch = 0, lastPoseSend = 0;
+let pinching = false;
+const wrap = (a) => Math.atan2(Math.sin(a), Math.cos(a));
+const bucket = (v) => Math.round(v / 5) * 5;
+
+function recenter() { center = { yaw: euler.y, pitch: euler.x }; log("recentered"); }
+$("recenter").onclick = recenter;
+
+function lookMode(yawDeg, pitchDeg) {
+  const h = yawDeg > DEAD_DEG ? "left" : yawDeg < -DEAD_DEG ? "right" : "idle";
+  const v = pitchDeg > DEAD_DEG ? "up" : pitchDeg < -DEAD_DEG ? "down" : "idle";
+  const excess = Math.max(Math.abs(yawDeg), Math.abs(pitchDeg)) - DEAD_DEG;
+  const speed = 5 + 25 * THREE.MathUtils.clamp(excess / (MAX_DEG - DEAD_DEG), 0, 1);
+  cmd("set_rotation_speed_deg", { rotation_speed_deg: bucket(speed) });
+  cmd("set_look_horizontal", { look_horizontal: h });
+  cmd("set_look_vertical", { look_vertical: v });
+  cmd("set_move_longitudinal", { move_longitudinal: pinching ? "forward" : "idle" });
+}
+
+function poseMode(now) {
+  if (prevYaw !== null) { accYaw += wrap(euler.y - prevYaw); accPitch += wrap(euler.x - prevPitch); }
+  prevYaw = euler.y; prevPitch = euler.x;
+  if (now - lastPoseSend < POSE_INTERVAL_MS) return;
+  lastPoseSend = now;
+  const k = Math.round(MODEL_FPS * POSE_INTERVAL_MS / 1000);
+  const ry = POSE_YAW_SIGN * accYaw / k, rx = POSE_PITCH_SIGN * accPitch / k;
+  accYaw = accPitch = 0;
+  const tz = pinching ? 0.5 : 0;
+  if (Math.abs(ry) < 1e-4 && Math.abs(rx) < 1e-4 && !tz) { cmd("set_camera_pose", { camera_pose: [] }); return; }
+  const pose = []; for (let i = 0; i < k; i++) pose.push(rx, ry, 0, 0, 0, tz);
+  cmd("set_camera_pose", { camera_pose: pose }, true);
+}
+
+renderer.setAnimationLoop((t) => {
+  if (renderer.xr.isPresenting) {
+    euler.setFromQuaternion(camera.quaternion, "YXZ");
+    const yawDeg = THREE.MathUtils.radToDeg(wrap(euler.y - center.yaw));
+    const pitchDeg = THREE.MathUtils.radToDeg(wrap(euler.x - center.pitch));
+    if ($("mode").value === "look") lookMode(yawDeg, pitchDeg); else poseMode(t);
+    setHud(`yaw ${yawDeg.toFixed(0)}° pitch ${pitchDeg.toFixed(0)}° ${pinching ? "▶ forward" : ""}`);
+  }
+  renderer.render(scene, camera);
+});
+
+$("enter").onclick = async () => {
+  try {
+    const session = await navigator.xr.requestSession("immersive-vr", { optionalFeatures: ["local-floor", "hand-tracking"] });
+    // Leave the <video> displayed: Safari can stop updating a display:none video, freezing the texture.
+    renderer.domElement.classList.remove("hidden");
+    await renderer.xr.setSession(session);
+    setTimeout(recenter, 800); // capture the resting head pose as "straight ahead"
+    // Pinch -> hold forward. Listen on the session, not three's controllers 0/1: with hand-tracking on,
+    // visionOS lists the hands first and the transient-pointer (pinch) sources after them.
+    session.addEventListener("selectstart", () => { pinching = true; });
+    session.addEventListener("selectend", () => { pinching = false; });
+    session.addEventListener("end", () => {
+      pinching = false;
+      renderer.domElement.classList.add("hidden");
+      // stop whatever the head was doing, or the world keeps spinning after you exit
+      cmd("set_look_horizontal", { look_horizontal: "idle" });
+      cmd("set_look_vertical", { look_vertical: "idle" });
+      cmd("set_move_longitudinal", { move_longitudinal: "idle" });
+      cmd("set_camera_pose", { camera_pose: [] });
+    });
+    log("VR session started — look around; pinch to walk forward");
+  } catch (e) { log("XR failed:", e.message || e); }
+};
+
+// ---- desktop fallback ---------------------------------------------------------------
+const keys = new Set();
+function keyboard() {
+  if (!ready || renderer.xr.isPresenting) return;
+  cmd("set_move_longitudinal", { move_longitudinal: keys.has("w") ? "forward" : keys.has("s") ? "back" : "idle" });
+  cmd("set_move_lateral", { move_lateral: keys.has("a") ? "strafe_left" : keys.has("d") ? "strafe_right" : "idle" });
+  cmd("set_look_horizontal", { look_horizontal: keys.has("arrowleft") ? "left" : keys.has("arrowright") ? "right" : "idle" });
+  cmd("set_look_vertical", { look_vertical: keys.has("arrowup") ? "up" : keys.has("arrowdown") ? "down" : "idle" });
+}
+addEventListener("keydown", (e) => {
+  if (e.target.closest?.("input, select, textarea")) return; // don't hijack the prompt box or dropdowns
+  if (e.key === " " || e.key.startsWith("Arrow")) e.preventDefault();
+  if (e.key === " ") keys.clear(); else keys.add(e.key.toLowerCase());
+  keyboard();
+});
+addEventListener("keyup", (e) => { keys.delete(e.key.toLowerCase()); keyboard(); });
+</script>
+</body>
+</html>

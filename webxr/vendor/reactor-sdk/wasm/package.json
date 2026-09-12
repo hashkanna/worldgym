@@ -1,0 +1,21 @@
+{
+  "name": "reactor-wasm",
+  "type": "module",
+  "description": "WebAssembly binding for reactor-core: implements the host traits with browser APIs and exposes a wasm-bindgen client to JavaScript",
+  "version": "0.1.0",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/reactor-team/reactor-client-sdks"
+  },
+  "files": [
+    "reactor_wasm_bg.wasm",
+    "reactor_wasm.js",
+    "reactor_wasm.d.ts"
+  ],
+  "main": "reactor_wasm.js",
+  "types": "reactor_wasm.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}

@@ -1,0 +1,14 @@
+<h2>What we found</h2>
+<p class=k>reactor/lingbot-world-2, anchored on a photo of the prize slide at the venue, seed 42. Similarity = ½ SSIM + ½ ORB inlier ratio on 320-px greyscale frames.</p>
+<div class=grid>
+  <div class=card><b>Controls: right, but late</b><div class=k>All 6 actions moved the scene the right way. Motion starts ~2–3 s after the command.</div></div>
+  <div class=card><b>Standing still holds</b><div class=k>0.84 similarity to the start frame in both runs — the baseline for everything else.</div></div>
+  <div class=card><b>Walk forward and back: you don't get home</b><div class=k>0.07 and 0.18. Walking into the TV takes you through the screen into another office; walking back never returns the first room.</div></div>
+  <div class=card><b>Turn away and back: a similar room, not the same one</b><div class=k>0.13 and 0.17. When you look back, the room is the same kind of room but not the same view.</div></div>
+</div>
+<h2>Exhibits</h2>
+<div class=grid>
+  <div class=card><b>Walk into the slide</b> <span class=k>matching prompt · 32 s</span><video src="exhibits/walk-into-the-slide.mp4" controls muted loop playsinline preload="metadata"></video></div>
+  <div class=card><b>Backup drive</b> <span class=k>"residential street" prompt · 32 s</span><video src="exhibits/backup-drive.mp4" controls muted loop playsinline preload="metadata"></video></div>
+</div>
+<p class=k>Run <code>lbw2-venue-slide</code> shared the Mac with a second session during controllability, so its frame rate dipped; <code>lbw2-venue-slide-2</code> ran alone. Older runs are in <code>results/_archive</code> — their rotation score used <code>set_camera_pose</code>, which turned far less than 360°, and their loop test stopped before the lag-delayed return finished.</p>

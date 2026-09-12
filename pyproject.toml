@@ -1,0 +1,25 @@
+[project]
+name = "worldgym"
+version = "0.1.0"
+description = "A Gym-style wrapper and physics-consistency probe suite for real-time world models on Reactor"
+requires-python = ">=3.10"
+dependencies = [
+    "reactor-sdk",
+    "numpy",
+    "opencv-python-headless",
+    "scikit-image",
+    "imageio",
+    "imageio-ffmpeg",
+    "python-dotenv",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "ruff"]
+agent = ["anthropic"]
+modal = ["modal"]
+
+[tool.setuptools.packages.find]
+include = ["worldgym*"]
+
+[tool.ruff]
+line-length = 100

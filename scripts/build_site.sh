@@ -13,7 +13,8 @@ rm -rf site/dashboard/findings
 cp -R webxr site/webxr
 rm -f site/webxr/serve.py
 for run in results/*/; do
-  [ "$run" = "results/_archive/" ] || cp -R "$run" site/results/
+  # no trailing slash: BSD cp would copy the folder's contents instead of the folder
+  [ "$run" = "results/_archive/" ] || cp -R "${run%/}" site/results/
 done
 
 # Pages rejects files over 25 MiB

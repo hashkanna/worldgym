@@ -35,11 +35,10 @@ now it's a number you can track across models and versions."
 ## Demo run sheet
 
 **Before judging**
-- Keep the Claude Code session open — it runs the viewer server and the public trycloudflare link
-  (the link changes whenever the tunnel restarts).
-- Tab 1: the public trycloudflare link → Connect & start about a minute before the judges arrive;
+- Tab 1: the hosted viewer, https://worldgym-900.pages.dev/webxr/ (passcode: `DEMO_PASSCODE` in your
+  `.env`) → Connect & start about a minute before the judges arrive;
   wait for "started". A 429 / "no available capacity" error means Reactor is full: wait ~10 s and click again.
-- Tab 2: the findings page (artifact link) or `dashboard/index.html`.
+- Tab 2: the findings page, https://worldgym-900.pages.dev/dashboard/findings.html (scorecard at `/dashboard/`).
 - Fallback: `dashboard/exhibits/walk-into-the-slide.mp4` (walks through the screen) or
   `dashboard/exhibits/backup-drive.mp4` (street).
 
@@ -76,6 +75,6 @@ now it's a number you can track across models and versions."
 ## Submission checklist
 
 - Repo with `README.md` (see "What we learned from the live API").
-- Findings page link, plus `dashboard/index.html`.
+- Site: https://worldgym-900.pages.dev (findings, scorecard, viewer).
 - Videos: `demo/backup-venue.mp4`, `demo/backup-room.mp4`.
 - Deadline and format: not in the organiser emails — check the event Discord (https://discord.gg/vBHYfwyt5V).

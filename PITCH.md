@@ -27,7 +27,7 @@ the frames with classical computer vision."
 - "Walk four seconds forward and four back and you don't get home: 0.07 to 0.18 across two runs. You
   walked through that screen yourself — walking back never brings it back."
 - "Turn away and back: 0.13 to 0.17. You come back to a room that looks similar, but it isn't the same view."
-- "And it isn't one model: LingBot v1 fails the same way — 0.12 walking back, 0.11 turning back."
+- "And it isn't one model: LingBot v1 fails the same way — 0.12 to 0.20 walking back, 0.11 to 0.14 turning back."
 - "A new prompt does nothing while you stand still — but once you move, the prompt beats the photo."
 
 **Close (10 s).** "That's the gap between a beautiful video model and a simulator you can trust — and

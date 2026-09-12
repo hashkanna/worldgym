@@ -53,6 +53,36 @@ def build(results_root: str | Path = "results", out_path: str | Path = "dashboar
     notes = root / "notes.html"  # optional hand-written findings, inserted verbatim
     if notes.exists():
         parts.append(notes.read_text())
+    # by-model table: mean score per probe across that model's runs. Probes whose premise
+    # didn't happen (no_motion, no_restyle) show their flag instead of a number.
+    void = {"no_motion", "no_restyle"}
+    by_model: dict[str, dict[str, dict]] = {}
+    for r in runs:
+        for p in r["probes"]:
+            cell = by_model.setdefault(r["model"], {}).setdefault(p["name"], {"scores": [], "flags": set()})
+            hit = void & set(p.get("flags", []))
+            cell["flags"] |= hit
+            if not hit:
+                cell["scores"].append(p["score"])
+    parts.append("<h2>By model</h2><table><tr><th>Model</th><th>Runs</th>" +
+                 "".join(f"<th>{html.escape(n)}</th>" for n in probe_names) + "</tr>")
+    for model, cells_by_probe in by_model.items():
+        n_runs = sum(1 for r in runs if r["model"] == model)
+        cells = []
+        for n in probe_names:
+            cell = cells_by_probe.get(n)
+            if cell is None:
+                cells.append("<td class=k>—</td>")
+            elif not cell["scores"]:
+                cells.append("<td>" + "".join(f"<span class=flag>{html.escape(f)}</span>" for f in sorted(cell["flags"])) + "</td>")
+            else:
+                s = cell["scores"]
+                mean = sum(s) / len(s)
+                spread = f"<div class=k>{min(s):.2f}–{max(s):.2f}</div>" if len(s) > 1 else ""
+                cells.append(f'<td><span class="score {_cls(mean)}">{mean:.2f}</span>{spread}{_bar(mean)}</td>')
+        parts.append(f"<tr><td>{html.escape(model)}</td><td>{n_runs}</td>" + "".join(cells) + "</tr>")
+    parts.append("</table><h2>Every run</h2>")
+
     # summary table
     parts.append("<table><tr><th>Run</th><th>Model</th><th>Overall</th>" +
                  "".join(f"<th>{html.escape(n)}</th>" for n in probe_names) + "</tr>")

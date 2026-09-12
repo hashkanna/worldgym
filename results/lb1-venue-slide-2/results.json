@@ -1,0 +1,110 @@
+{
+  "model": "reactor/lingbot",
+  "created": "2026-09-12T15:59:04",
+  "env": {
+    "model": "reactor/lingbot",
+    "steps": 7,
+    "time_to_first_frame_s": 1.928
+  },
+  "probes": [
+    {
+      "name": "stillness",
+      "score": 0.8036,
+      "details": {
+        "mean_similarity": 0.8036,
+        "end_similarity": 0.7366,
+        "curve": [
+          0.9788,
+          0.9354,
+          0.9202,
+          0.8917,
+          0.8938,
+          0.8934,
+          0.8851,
+          0.8784,
+          0.879,
+          0.8768,
+          0.8568,
+          0.8525,
+          0.8488,
+          0.8346,
+          0.4048,
+          0.4882,
+          0.634,
+          0.7549,
+          0.7953,
+          0.7751,
+          0.7852,
+          0.7717,
+          0.7688,
+          0.7501,
+          0.7366
+        ],
+        "n_frames": 144
+      },
+      "flags": [],
+      "wall_seconds": 4.39,
+      "n_frames": 148,
+      "gif": "stillness.gif",
+      "first_png": "stillness_first.png",
+      "last_png": "stillness_last.png"
+    },
+    {
+      "name": "loop_closure[forward]",
+      "score": 0.1976,
+      "details": {
+        "closure": {
+          "score": 0.1976,
+          "ssim": 0.3826,
+          "orb": 0.0126
+        },
+        "closure_end": {
+          "score": 0.1341,
+          "ssim": 0.2578,
+          "orb": 0.0105
+        },
+        "peak_frame": 358,
+        "excursion": {
+          "score": 0.1319
+        },
+        "moved": 0.8681,
+        "n_frames": 192
+      },
+      "flags": [],
+      "wall_seconds": 15.19,
+      "n_frames": 613,
+      "gif": "loop_closure_forward.gif",
+      "first_png": "loop_closure_forward_first.png",
+      "last_png": "loop_closure_forward_last.png"
+    },
+    {
+      "name": "turn_closure",
+      "score": 0.1371,
+      "details": {
+        "closure": {
+          "score": 0.1371,
+          "ssim": 0.2417,
+          "orb": 0.0324
+        },
+        "closure_end": {
+          "score": 0.1207,
+          "ssim": 0.2413,
+          "orb": 0.0
+        },
+        "peak_frame": 487,
+        "excursion": {
+          "score": 0.0458
+        },
+        "moved": 0.9542,
+        "n_frames": 192
+      },
+      "flags": [],
+      "wall_seconds": 17.93,
+      "n_frames": 607,
+      "gif": "turn_closure.gif",
+      "first_png": "turn_closure_first.png",
+      "last_png": "turn_closure_last.png"
+    }
+  ],
+  "overall": 0.3794
+}

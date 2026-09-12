@@ -86,49 +86,17 @@ Rebuild the findings page after editing `dashboard/findings/template.html`: `pyt
 Browser helpers (`scripts/browser/`, `npm install` there first): `record_drive.mjs` records a scripted
 drive through the local viewer; `capture_frames.mjs` saves frames and WebRTC stream stats.
 
-## Tonight (before the hackathon)
+## Compare models
 
-1. **Get a Reactor key + credits**, then the one thing that matters most:
-   ```bash
-   python scripts/smoke_test.py --image assets/anchors/street.jpg
-   ```
-   It prints time-to-first-frame, fps, command→motion latency, and saves `results/smoke/`.
-   If the SDK's signatures differ from the docs, every fix goes in
-   `worldgym/backends/reactor_backend.py` (one file). Things to confirm:
-   `Reactor(model_name=, api_key=)`, `tracks.with_direction("recvonly").with_kind("video").one()`,
-   `on_frame` callback args, `upload_file()` → ref accepted by `set_image`.
-2. **Replace `assets/anchors/street.jpg`** with real landscape photos (see `assets/anchors/README.md`).
-3. **Run one live probe** to calibrate frame counts (`--short` halves them):
-   ```bash
-   python scripts/run_probes.py --probes stillness,controllability --short
-   open dashboard/index.html
-   ```
-   Check: does `set_camera_pose` play once and stop, or hold? Does `chunk_complete` arrive
-   every ~N frames? Adjust `extra_frames` in `WorldEnv.pose` and `n_frames` defaults.
-4. **Try WorldXR on the Vision Pro** with the fake-free path (it only needs the key):
-   ```bash
-   python webxr/serve.py                                # http://localhost:8000
-   cloudflared tunnel --url http://localhost:8000       # or: ngrok http 8000  (WebXR needs https)
-   ```
-   Open the tunnel URL in Safari on the headset → pick an image → Connect → Enter VR.
-   If "Enter VR" stays disabled: Settings ▸ Apps ▸ Safari ▸ Advanced ▸ Feature Flags ▸ WebXR.
-   Test the same page on your Mac first (keyboard: W/S/A/D, arrows) to separate Reactor
-   problems from XR problems. If `esm.sh` can't bundle the SDK, scaffold
-   `npx create-reactor-app worldxr --model=lingbot-world-2` and port the page into it.
-
-## On the day
+Run the same suite on each world model with the same photo, prompt and seed. Every run lands in
+`results/<run>/`, and the scorecard's **By model** table averages runs per model.
 
 ```bash
-python scripts/run_probes.py --model reactor/lingbot-world-2 --image assets/anchors/room.jpg \
-  --prompt "a large wall-mounted TV showing a hackathon prize slide in a modern office event space, cool daylight, photoreal" \
-  --run lbw2-venue-slide
-python scripts/run_probes.py --model reactor/lingbot --image assets/anchors/street.jpg --run lb1-street --no-pose
-python scripts/run_probes.py --image assets/anchors/driving.jpg --run lbw2-driving
-python scripts/futures_tree.py --branches 4                      # 4 concurrent sessions (limit is 5)
-python -m worldgym.agent --goal "walk to the red door" --steps 10  # stretch, needs ANTHROPIC_API_KEY
+P="a large wall-mounted TV showing a hackathon prize slide in a modern office event space, cool daylight, photoreal"
+python scripts/run_probes.py --model reactor/lingbot-world-2 --image assets/anchors/room.jpg --prompt "$P" --run lbw2-venue-slide
+python scripts/run_probes.py --model reactor/lingbot         --image assets/anchors/room.jpg --prompt "$P" --run lb1-venue-slide
+python scripts/list_model_commands.py reactor/happy-oyster-adventure   # a model's controls, before mapping them in actions.py
 ```
-
-Each run writes `results/<run>/results.json` + GIFs and rebuilds `dashboard/index.html`.
 
 ## How the probes score
 

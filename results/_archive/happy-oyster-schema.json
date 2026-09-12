@@ -1,0 +1,550 @@
+{
+  "reactor/happy-oyster-adventure": {
+    "components": {
+      "schemas": {
+        "ActionError": {
+          "properties": {
+            "action": {
+              "description": "The action that failed, e.g. 'create_world'.",
+              "type": "string"
+            },
+            "code": {
+              "description": "Gate code or upstream error code.",
+              "type": "string"
+            },
+            "message": {
+              "description": "Human-readable failure description.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "action",
+            "code",
+            "message"
+          ],
+          "type": "object"
+        },
+        "ReactorUploadReference": {
+          "description": "Reference to a file uploaded via the Reactor upload protocol.",
+          "format": "reactor-upload-reference",
+          "properties": {
+            "mime_type": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "size": {
+              "type": "integer"
+            },
+            "upload_id": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          "required": [
+            "upload_id",
+            "name",
+            "mime_type",
+            "size"
+          ],
+          "type": "object"
+        },
+        "TravelCredentials": {
+          "properties": {
+            "api_base_url": {
+              "description": "Gateway app base URL the SDK must call.",
+              "type": "string"
+            },
+            "encrypted_world_id": {
+              "description": "The world the ticket admits into.",
+              "type": "string"
+            },
+            "expires_in": {
+              "description": "Ticket validity in seconds.",
+              "type": "integer"
+            },
+            "mock": {
+              "description": "True when minted by the offline mock backend.",
+              "type": "boolean"
+            },
+            "ticket": {
+              "description": "One-time travel ticket (tk-\u2026), 30 min, single use.",
+              "type": "string"
+            },
+            "token": {
+              "description": "Temp API-key token (st-\u2026) for SDK HTTP auth.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "encrypted_world_id",
+            "token",
+            "ticket",
+            "api_base_url",
+            "expires_in",
+            "mock"
+          ],
+          "type": "object"
+        },
+        "TravelEnded": {
+          "properties": {
+            "encrypted_travel_id": {
+              "description": "The travel that was ended.",
+              "type": "string"
+            },
+            "status": {
+              "description": "Final travel status reported by the API.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "encrypted_travel_id",
+            "status"
+          ],
+          "type": "object"
+        },
+        "TravelState": {
+          "properties": {
+            "chapters": {
+              "default": null,
+              "description": "Directing: auto-detected chapters (title, brief, start/end seconds, image).",
+              "items": {},
+              "type": "array"
+            },
+            "character_actions": {
+              "default": null,
+              "description": "Adventure: character action verbs currently available.",
+              "items": {},
+              "type": "array"
+            },
+            "encrypted_travel_id": {
+              "description": "The live travel this describes.",
+              "type": "string"
+            },
+            "environment_actions": {
+              "default": null,
+              "description": "Adventure: environment interaction verbs currently available.",
+              "items": {},
+              "type": "array"
+            },
+            "rtc_status": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Upstream push-stream status (e.g. PUSHING)."
+            },
+            "status": {
+              "description": "Travel status: init / pending / running / failed / completed.",
+              "type": "string"
+            },
+            "updated_at": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Upstream last-update time (ISO 8601)."
+            },
+            "user_instructions": {
+              "default": null,
+              "description": "Directing: every text instruction with its scheduled window on the video timeline (start_time / end_time seconds) and execution status.",
+              "items": {},
+              "type": "array"
+            }
+          },
+          "required": [
+            "encrypted_travel_id",
+            "status"
+          ],
+          "type": "object"
+        },
+        "WorldState": {
+          "properties": {
+            "api_base_url": {
+              "default": "",
+              "description": "HappyOyster gateway app base URL clients must use for direct calls.",
+              "type": "string"
+            },
+            "backend": {
+              "default": "",
+              "description": "Upstream in use: 'happyoyster' or 'mock'.",
+              "type": "string"
+            },
+            "encrypted_world_id": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "The current world, when one is selected. Save it: worlds are permanent and this id is the only way to come back to one in a later session."
+            },
+            "first_frame": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "First-frame preview URL once available."
+            },
+            "mode": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Experience mode of the bound world: 1 Adventure, 2 Directing."
+            },
+            "phase": {
+              "description": "Session phase: no_world / creating / building / ready / traveling / failed. While 'traveling' the world API (create/attach/credentials) is locked.",
+              "type": "string"
+            },
+            "prompt": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "The prompt the bound world was created from."
+            },
+            "world_status": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Raw upstream build status, as last confirmed."
+            }
+          },
+          "required": [
+            "phase"
+          ],
+          "type": "object"
+        }
+      }
+    },
+    "info": {
+      "description": "The happy-oyster-adventure model: mode 1 worlds, walked with movement controls.",
+      "title": "happy-oyster-adventure",
+      "version": "v0.0.0"
+    },
+    "openapi": "3.1.0",
+    "paths": {
+      "/events/attach_world": {
+        "post": {
+          "operationId": "attach_world",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "encrypted_world_id": {
+                      "description": "Encrypted id of the world to attach, from an earlier create_world.",
+                      "type": "string",
+                      "x-reactor-moderate": false
+                    }
+                  },
+                  "required": [
+                    "encrypted_world_id"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "202": {
+              "description": "Command accepted"
+            }
+          },
+          "summary": "Make an existing world the session's current world by its encrypted id. The id is a capability: there is no listing, you must already possess it (saved from a create_world in an earlier session). Verified upstream before binding; rejected with TRAVELING while a travel is live, with MODE_MISMATCH when the world belongs to the other experience mode (connect to that model instead), and the upstream error (403001) passes through when the world does not exist or is not yours."
+        }
+      },
+      "/events/create_world": {
+        "post": {
+          "operationId": "create_world",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "first_frame_image": {
+                      "anyOf": [
+                        {
+                          "$ref": "#/components/schemas/ReactorUploadReference"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ],
+                      "default": null,
+                      "description": "Uploaded image file used as the world's starting frame \u2014 the upload-based alternative to first_frame_image_url for images that have no public URL. Must be an image/* file of at most 2 MB (forwarded inline to HappyOyster, which caps the request size), landscape, with a width/height ratio between 1.5 and 2.0. A visual anchor the world is generated from (with the prompt). Content policy applies (403005 on rejection). Mutually exclusive with first_frame_image_url.",
+                      "x-reactor-moderate": false
+                    },
+                    "first_frame_image_url": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ],
+                      "default": null,
+                      "description": "Publicly fetchable image URL used as the world's starting frame. A visual anchor the world is generated from (with the prompt). The image must be landscape with a width/height ratio between 1.5 and 2.0. Content policy applies (403005 on rejection). Mutually exclusive with first_frame_image.",
+                      "x-reactor-moderate": false
+                    },
+                    "perspective": {
+                      "default": "third_person",
+                      "description": "Camera perspective.",
+                      "enum": [
+                        "first_person",
+                        "third_person"
+                      ],
+                      "type": "string",
+                      "x-reactor-moderate": false
+                    },
+                    "prompt": {
+                      "description": "Natural-language world description, up to 2000 characters.",
+                      "type": "string",
+                      "x-reactor-moderate": true
+                    }
+                  },
+                  "required": [
+                    "prompt"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "202": {
+              "description": "Command accepted"
+            }
+          },
+          "summary": "Create a new Adventure world from a prompt and make it the session's current world, following its build. Re-points the slot freely while not traveling: the previously current world is untouched and stays in the account (worlds are permanent \u2014 save the id). Rejected with TRAVELING while a travel is live. An optional starting frame can be supplied as a public URL (first_frame_image_url) or as an uploaded image file (first_frame_image) \u2014 one or the other, not both."
+        }
+      },
+      "/events/end_travel": {
+        "post": {
+          "operationId": "end_travel",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "encrypted_travel_id": {
+                      "description": "The travel to end.",
+                      "type": "string",
+                      "x-reactor-moderate": false
+                    }
+                  },
+                  "required": [
+                    "encrypted_travel_id"
+                  ],
+                  "type": "object"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/TravelEnded"
+                  }
+                }
+              },
+              "description": "TravelEnded"
+            }
+          },
+          "summary": "End a travel through the Open API."
+        }
+      },
+      "/events/get_credentials": {
+        "post": {
+          "operationId": "get_credentials",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {},
+                  "type": "object"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/TravelCredentials"
+                  }
+                }
+              },
+              "description": "TravelCredentials"
+            }
+          },
+          "summary": "Mint a temp token and a one-time travel ticket for the session's world. Rejected with NO_WORLD / WORLD_NOT_READY unless the bound world is ready; the world is re-verified upstream immediately before issuing."
+        }
+      },
+      "/events/get_state": {
+        "post": {
+          "operationId": "get_state",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {},
+                  "type": "object"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/WorldState"
+                  }
+                }
+              },
+              "description": "WorldState"
+            }
+          },
+          "summary": "Return the authoritative session/world snapshot."
+        }
+      }
+    },
+    "webhooks": {
+      "action_error": {
+        "post": {
+          "operationId": "action_error",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActionError"
+                }
+              }
+            },
+            "required": true
+          },
+          "summary": "A rejected or failed action, surfaced to the requesting client.\n\nGate rejections use gate codes (``WORLD_EXISTS``, ``NO_WORLD``,\n``WORLD_NOT_READY``); upstream failures pass the Open API code through."
+        }
+      },
+      "travel_credentials": {
+        "post": {
+          "operationId": "travel_credentials",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TravelCredentials"
+                }
+              }
+            },
+            "required": true
+          },
+          "summary": "Everything a client needs to open the HappyOyster session directly.\n\nThe client hands ``token`` and ``ticket`` to the HappyOyster Web SDK\npointed at ``api_base_url``; the video stream then flows straight from\nHappyOyster to the client."
+        }
+      },
+      "travel_ended": {
+        "post": {
+          "operationId": "travel_ended",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TravelEnded"
+                }
+              }
+            },
+            "required": true
+          },
+          "summary": "Confirmation that a travel was ended through the Open API."
+        }
+      },
+      "travel_state": {
+        "post": {
+          "operationId": "travel_state",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TravelState"
+                }
+              }
+            },
+            "required": true
+          },
+          "summary": "The authoritative live-travel snapshot, reconciled upstream.\n\nOnce credentials are issued the model discovers the travel the client's\nticket created and keeps polling its upstream status, broadcasting this\nsnapshot on every change until the travel reaches a terminal state.\nDirecting worlds populate the instruction timeline (each instruction with\nits scheduled window on the video timeline and its execution status) and\ndetected chapters; Adventure worlds populate the available action verbs."
+        }
+      },
+      "world_state": {
+        "post": {
+          "operationId": "world_state",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorldState"
+                }
+              }
+            },
+            "required": true
+          },
+          "summary": "The authoritative session/world snapshot. Clients mirror this verbatim.\n\nBroadcast on connect, on every state transition, and on every upstream\nreconcile that changed anything; also returned by ``get_state``. This is\nthe only state channel \u2014 there is no event whose effect is observable\nanywhere else."
+        }
+      }
+    },
+    "x-reactor": {
+      "tracks": [
+        {
+          "direction": "out",
+          "kind": "video",
+          "name": "status_video"
+        }
+      ]
+    }
+  }
+}

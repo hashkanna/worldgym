@@ -7,8 +7,8 @@ cd "$(dirname "$0")/.."
 
 rm -rf site
 mkdir -p site/results
-cp pages/index.html site/index.html
 cp -R dashboard site/dashboard
+cp dashboard/findings.html site/index.html   # the findings page is the front door
 rm -rf site/dashboard/findings
 cp -R webxr site/webxr
 rm -f site/webxr/serve.py

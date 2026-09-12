@@ -35,9 +35,10 @@ now it's a number you can track across models and versions."
 ## Demo run sheet
 
 **Before judging**
-- Keep the Claude Code session open — it runs the viewer server.
-- Tab 1: http://localhost:8000 → Connect & start about a minute before the judges arrive; wait for
-  "started". A 429 / "no available capacity" error means Reactor is full: wait ~10 s and click again.
+- Keep the Claude Code session open — it runs the viewer server and the public trycloudflare link
+  (the link changes whenever the tunnel restarts).
+- Tab 1: the public trycloudflare link → Connect & start about a minute before the judges arrive;
+  wait for "started". A 429 / "no available capacity" error means Reactor is full: wait ~10 s and click again.
 - Tab 2: the findings page (artifact link) or `dashboard/index.html`.
 - Fallback: `demo/backup-venue.mp4` (walks through the screen) or `demo/backup-room.mp4` (street).
 

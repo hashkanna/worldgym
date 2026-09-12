@@ -1,11 +1,12 @@
 <h2>What we found</h2>
-<p class=k>reactor/lingbot-world-2 (two runs) and reactor/lingbot (one run), anchored on a photo of the prize slide at the venue, seed 42. Similarity = ½ SSIM + ½ ORB inlier ratio on 320-px greyscale frames.</p>
+<p class=k>reactor/lingbot-world-2, reactor/lingbot and reactor/happy-oyster-adventure, anchored on a photo of the prize slide at the venue, seed 42. Similarity = ½ SSIM + ½ ORB inlier ratio on 320-px greyscale frames.</p>
 <div class=grid>
   <div class=card><b>Controls: right, but late</b><div class=k>All 6 actions moved the scene the right way. Motion starts ~2–3 s after the command.</div></div>
   <div class=card><b>Standing still holds</b><div class=k>0.84 similarity to the start frame in both runs — the baseline for everything else.</div></div>
   <div class=card><b>Walk forward and back: you don't get home</b><div class=k>0.07 and 0.18. Walking into the TV takes you through the screen into another office; walking back never returns the first room.</div></div>
   <div class=card><b>Turn away and back: a similar room, not the same one</b><div class=k>0.13 and 0.17. When you look back, the room is the same kind of room but not the same view.</div></div>
   <div class=card><b>A new prompt needs movement</b><div class=k>Swapping to “night, lights off” while standing still changed the picture no more than normal drift over 10 s (flag <code>no_restyle</code>). Once you walk, the prompt takes over.</div></div>
+  <div class=card><b>HappyOyster holds best, still doesn't return</b><div class=k>Standing still 0.95, walk forward and back 0.30, turn away and back 0.22, controls 4/6 (the wall blocks forward). It streams 11–20 fps, so holds last longer in real time; one run per test.</div></div>
   <div class=card><b>LingBot v1 fails the same way</b><div class=k>Controls 6/6, standing still 0.80, walk forward and back 0.12–0.20, turn away and back 0.11–0.14 over two runs. Neither model brings you back.</div></div>
 </div>
 <h2>Exhibits</h2>

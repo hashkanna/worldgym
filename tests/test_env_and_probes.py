@@ -64,6 +64,13 @@ class ActionsTest(unittest.TestCase):
         self.assertEqual(cmds[-1].name, "set_look_vertical")
         self.assertEqual(cmds[-1].params, {"look_vertical": "up"})
 
+    def test_happy_oyster_mapping(self):
+        m = "reactor/happy-oyster-adventure"
+        fwd = [(c.name, c.params) for c in commands_for("forward", m)]
+        self.assertEqual(fwd, [("stop", {}), ("move", {"direction": "Front"})])
+        self.assertEqual(commands_for("look_left", m)[-1].params, {"direction": "Mouse_Left"})
+        self.assertEqual([c.name for c in commands_for("idle", m)], ["stop"])
+
     def test_pose_builders(self):
         p = pose_out_and_back(10, 0.5)
         self.assertEqual(len(p), 120)

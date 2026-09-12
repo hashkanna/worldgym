@@ -134,6 +134,8 @@ class WorldEnv:
         await self.backend.send("start", {})
         await self._wait_frames(warmup_frames)
         self.info["time_to_first_frame_s"] = round(time.monotonic() - t0, 3)
+        if getattr(self.backend, "info", None) is not None:
+            self.info["backend"] = self.backend.info  # e.g. world build time, dropped frames (kept live)
         self.info["steps"] = 0
         self._current_action = "idle"
         return self.last_frame  # type: ignore[return-value]

@@ -28,6 +28,7 @@ the frames with classical computer vision."
   walked through that screen yourself — walking back never brings it back."
 - "Turn away and back: 0.13 to 0.17. You come back to a room that looks similar, but it isn't the same view."
 - "And it isn't one model: LingBot v1 fails the same way — 0.12 to 0.20 walking back, 0.11 to 0.14 turning back."
+- "HappyOyster, which promises permanent worlds, does best: it stops at the wall instead of walking through the screen, and scores 0.30 walking back. But turn away and back, and you're somewhere new — 0.22."
 - "A new prompt does nothing while you stand still — but once you move, the prompt beats the photo."
 
 **Close (10 s).** "That's the gap between a beautiful video model and a simulator you can trust — and

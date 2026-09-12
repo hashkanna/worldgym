@@ -1,0 +1,9 @@
+{
+  "name": "worldgym-demo-video",
+  "private": true,
+  "type": "module",
+  "description": "Renders the WorldGym demo video: title cards, captions and screenshots of the hosted findings page",
+  "dependencies": {
+    "playwright-core": "^1.63.0"
+  }
+}

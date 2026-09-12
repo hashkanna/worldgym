@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>WorldGym · HappyOyster bridge</title>
+</head>
+<body style="margin:0;background:#000">
+<video id="v" autoplay muted playsinline style="width:640px"></video>
+<canvas id="c" width="512" height="288" hidden></canvas>
+<script src="happy-oyster.bundle.js"></script>
+<script>
+  // Driven by worldgym/backends/happy_oyster_backend.py through Playwright: the HappyOyster
+  // Web SDK streams the travel into <video>, and Python polls decoded frames out of it.
+  const video = document.getElementById("v");
+  const canvas = document.getElementById("c");
+  const ctx = canvas.getContext("2d");
+  const events = [];
+  let ho = null, frameNo = 0, lastGrabbed = -1;
+  const note = (type, data) => events.push({ type, data });
+
+  function countFrames() {
+    video.requestVideoFrameCallback((_now, meta) => { frameNo = meta.presentedFrames; countFrames(); });
+  }
+
+  window.hoStart = async ({ jwt, prompt, imageUrl, imageB64, imageType, perspective }) => {
+    ho = new HappyOysterModel({ mode: "adventure", videoElement: video });
+    ho.onWorldState((s) => note("world_state", { phase: s.phase, world: s.encrypted_world_id }));
+    ho.onTravelState((s) => note("travel_state", { status: s.status, rtc: s.rtc_status }));
+    ho.onActionError((e) => note("action_error", e));
+    await ho.connect(jwt);
+    const params = { prompt, perspective };
+    if (imageUrl) {
+      params.firstFrameImageUrl = imageUrl;
+    } else if (imageB64) {
+      const bytes = Uint8Array.from(atob(imageB64), (c) => c.charCodeAt(0));
+      params.firstFrameImage = new File([bytes], "anchor.jpg", { type: imageType || "image/jpeg" });
+    }
+    const t0 = performance.now();
+    const world = await ho.createWorld(params);
+    const buildS = (performance.now() - t0) / 1000;
+    const t1 = performance.now();
+    await ho.startTravel();
+    countFrames();
+    const deadline = performance.now() + 90000;
+    while (!(video.videoWidth > 0 && frameNo > 0)) {
+      if (performance.now() > deadline) throw new Error("travel started but no video frames within 90 s");
+      await new Promise((r) => setTimeout(r, 100));
+    }
+    return {
+      world_build_s: +buildS.toFixed(2),
+      travel_to_first_frame_s: +((performance.now() - t1) / 1000).toFixed(2),
+      video: `${video.videoWidth}x${video.videoHeight}`,
+      max_experience_time_s: ho.maxExperienceTimeSec,
+      encrypted_world_id: world?.encrypted_world_id ?? null,
+    };
+  };
+
+  window.hoControl = async (name, arg) => {
+    if (!ho || !ho.streaming) return false;
+    if (name === "move") await ho.move(arg);
+    else if (name === "look") await ho.look(arg);
+    else if (name === "stop") await ho.stop();
+    return true;
+  };
+
+  window.hoGrab = () => {
+    if (!video.videoWidth || frameNo === lastGrabbed) return null;
+    lastGrabbed = frameNo;
+    const h = Math.round((canvas.width * video.videoHeight) / video.videoWidth);
+    if (canvas.height !== h) canvas.height = h;
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    return { n: frameNo, jpg: canvas.toDataURL("image/jpeg", 0.85).slice(23), streaming: !!ho?.streaming };
+  };
+
+  window.hoEvents = () => events.splice(0);
+  window.hoEnd = async () => { if (ho) { try { await ho.disconnect(); } catch (e) { note("disconnect_error", String(e)); } } };
+</script>
+</body>
+</html>

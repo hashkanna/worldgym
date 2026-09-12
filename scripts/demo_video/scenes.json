@@ -1,0 +1,66 @@
+{
+  "voice": "Samantha",
+  "rate": 172,
+  "site": "https://worldgym-900.pages.dev",
+  "beats": [
+    {
+      "id": "01-hook",
+      "visual": { "type": "footage", "src": "demo/backup-venue.mp4", "start": 0.0,
+                  "eyebrow": "Live on Reactor · LingBot World 2",
+                  "caption": "Started from a photo of the prize slide · holding W" },
+      "say": "AI can now generate a world you can walk around in, live. This one started from a photo of the prize slide at WORLDS London. Hold W, and you walk straight into the screen."
+    },
+    {
+      "id": "02-question",
+      "visual": { "type": "card", "card": "title" },
+      "say": "It looks incredible for a few seconds. But to use it as a simulator, for robots, driving or reinforcement learning, you need to know one thing. Does the world stay put when you act in it?"
+    },
+    {
+      "id": "03a-how",
+      "visual": { "type": "card", "card": "how", "step": 1, "group": "how" },
+      "say": "WorldGym is a test rig for exactly that. It wraps any Reactor world model as a Gym environment: reset it from a photo, step it with an action, and get the frames back."
+    },
+    {
+      "id": "03b-tests",
+      "visual": { "type": "card", "card": "how", "step": 2, "group": "how" },
+      "say": "Then it plays like a tester would. Stand still. Press each control. Walk forward and back. Turn away, and look back. And it scores the frames from zero to one, against where each test started."
+    },
+    {
+      "id": "04-table",
+      "visual": { "type": "page", "shot": "table", "highlight": "none" },
+      "say": "We ran the same tests, with the same photo and prompt, on Reactor's three world models: LingBot World 2, LingBot one, and HappyOyster."
+    },
+    {
+      "id": "05-controls",
+      "visual": { "type": "page", "shot": "table", "highlight": "good" },
+      "say": "The controls respond. LingBot answers every time, but two to three seconds late, and HappyOyster stops where a wall is in the way. Standing still, every world holds, from point eight up to point nine five."
+    },
+    {
+      "id": "06-closure",
+      "visual": { "type": "page", "shot": "table", "highlight": "bad" },
+      "say": "But walk away and come back, or turn away and look back, and every model drops, to between point one and point three. HappyOyster, which promises permanent worlds, holds best, and still doesn't bring you back."
+    },
+    {
+      "id": "07-frames",
+      "visual": { "type": "scroll", "shot": "sheets" },
+      "say": "The frames show it. Walking forward takes you through the screen and into another room. Walk back, and the slide never returns. Turn away and look back, and the room has changed around you."
+    },
+    {
+      "id": "08-prompt",
+      "visual": { "type": "footage", "src": "demo/backup-room.mp4", "start": 1.0,
+                  "eyebrow": "Same photo · different prompt",
+                  "caption": "“a quiet residential street at golden hour”" },
+      "say": "We also found that once you move, the prompt beats the photo. The same slide, with a street prompt, becomes a street within seconds. Yet while you stand still, a new prompt changes nothing at all."
+    },
+    {
+      "id": "09-scorecard",
+      "visual": { "type": "scroll", "shot": "dashboard" },
+      "say": "Every run lands in a scorecard that averages each model automatically, so testing a new model, or a new version, is one command away."
+    },
+    {
+      "id": "10-close",
+      "visual": { "type": "card", "card": "close" },
+      "say": "WorldGym turns the gap between a beautiful video model and a simulator you can trust into a number. The findings, the scorecard and a live viewer are at world gym nine hundred, dot pages dot dev."
+    }
+  ]
+}

@@ -126,6 +126,17 @@ def commands_for(action: str, model: str = "reactor/lingbot-world-2") -> list[Co
             cmds.append(Command("set_look_vertical", {"look_vertical": action.split("_")[1]}))
         return cmds
 
+    if "happy-oyster" in model:
+        # HappyOyster Adventure: held move/look through its Web SDK; stop releases every axis first.
+        moves = {"forward": "Front", "back": "Back", "strafe_left": "Left", "strafe_right": "Right"}
+        looks = {"look_left": "Mouse_Left", "look_right": "Mouse_Right", "look_up": "Mouse_Up", "look_down": "Mouse_Down"}
+        cmds = [Command("stop", {})]
+        if action in moves:
+            cmds.append(Command("move", {"direction": moves[action]}))
+        elif action in looks:
+            cmds.append(Command("look", {"direction": looks[action]}))
+        return cmds
+
     raise ValueError(f"no action mapping for model {model!r}")
 
 

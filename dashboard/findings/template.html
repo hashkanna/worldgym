@@ -14,6 +14,7 @@
     --rule: #dfe0ea;
     --w2: #4453c9;
     --v1: #c98200;
+    --ho: #0f8f7a;
     --good: #0ca30c;
     --critical: #d03b3b;
     --sans: "Archivo", "Helvetica Neue", Arial, sans-serif;
@@ -30,6 +31,7 @@
       --rule: #2a2e4a;
       --w2: #6f7ef0;
       --v1: #c38612;
+      --ho: #23a08a;
     }
   }
   :root[data-theme="dark"] {
@@ -42,6 +44,7 @@
     --rule: #2a2e4a;
     --w2: #6f7ef0;
     --v1: #c38612;
+    --ho: #23a08a;
   }
 
   * { box-sizing: border-box; }
@@ -120,6 +123,7 @@
   .swatch.b { width: 10px; height: 10px; background: var(--w2); }
   .swatch.c { width: 10px; height: 10px; background: var(--v1); border-radius: 2px; }
   .swatch.d { width: 12px; height: 12px; border: 3px solid var(--v1); border-radius: 2px; }
+  .swatch.e { width: 10px; height: 10px; margin-inline: 1px; background: var(--ho); border-radius: 1px; transform: rotate(45deg); }
 
   .row {
     display: grid;
@@ -135,7 +139,7 @@
   .probe .name { font-weight: 600; }
   .probe .how { font-size: 0.82rem; color: var(--muted); }
   .lanes { grid-area: track; display: grid; gap: 4px; }
-  .lane { display: grid; grid-template-columns: 3.4rem minmax(0, 1fr); align-items: center; gap: 4px; }
+  .lane { display: grid; grid-template-columns: 5rem minmax(0, 1fr); align-items: center; gap: 4px; }
   .lane-label { font-family: var(--mono); font-size: 10.5px; color: var(--muted); }
   .track, .scale { position: relative; margin-inline: 10px; }
   .track {
@@ -168,11 +172,12 @@
   .dot.b { width: 12px; height: 12px; border: 2px solid var(--panel); background: var(--w2); }
   .dot.c { width: 12px; height: 12px; border: 2px solid var(--panel); background: var(--v1); border-radius: 3px; }
   .dot.d { width: 16px; height: 16px; border: 3px solid var(--v1); background: var(--panel); border-radius: 3px; }
+  .dot.e { width: 13px; height: 13px; border: 2px solid var(--panel); background: var(--ho); border-radius: 2px; transform: translate(-50%, -50%) rotate(45deg); }
   .dot:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
   .vals {
     grid-area: vals;
     display: grid;
-    grid-template-rows: repeat(2, 24px);
+    grid-template-rows: repeat(3, 24px);
     gap: 4px;
     align-items: center;
     text-align: right;
@@ -219,6 +224,7 @@
   .mark.flat { background: var(--muted); }
   .range { display: block; margin: 2px 0 0 26px; font-size: 11px; color: var(--muted); }
   .na { font-family: var(--sans); font-size: 0.9rem; color: var(--ink-2); }
+  .models-note { margin: -16px 0 28px; max-width: 48rem; font-size: 0.85rem; color: var(--muted); }
 
   .table-view { margin-top: 16px; font-size: 0.9rem; }
   .table-view summary { cursor: pointer; color: var(--ink-2); width: max-content; }
@@ -313,10 +319,11 @@
     }
     .row.axis { grid-template-areas: "track track"; }
     .axis .vh, .axis .vh-score { display: none; }
-    .vals { grid-template-rows: none; grid-template-columns: auto auto; justify-content: start; gap: 18px; text-align: left; }
+    .vals { grid-template-rows: none; gap: 2px; text-align: left; }
     .vals span::before { font-size: 11px; color: var(--muted); margin-right: 6px; }
-    .vals span:first-child::before { content: "World 2"; }
-    .vals span:last-child::before { content: "v1"; }
+    .vals span:nth-child(1)::before { content: "World 2"; }
+    .vals span:nth-child(2)::before { content: "v1"; }
+    .vals span:nth-child(3)::before { content: "HappyOyster"; }
     .frames.three { --cols: 2; }
     .spec { grid-template-columns: minmax(0, 1fr); gap: 2px; }
     .spec dd { margin-bottom: 10px; }
@@ -327,16 +334,16 @@
   <header class="head">
     <div class="topbar">
       <p class="meta">WorldGym · Reactor world models · WORLDS | LONDON · 12 Sept 2026</p>
-      <nav class="nav" aria-label="WorldGym"><a href="/dashboard/">Scorecard</a><a href="/webxr/">Drive the model</a></nav>
+      <nav class="nav" aria-label="WorldGym"><a href="/dashboard/">Scorecard</a><a href="/webxr/">Drive the model</a><a href="/dashboard/exhibits/worldgym-demo.mp4">Demo video</a></nav>
     </div>
     <h1>Does the world come back?</h1>
-    <p class="lede">We drove two live world models through a Gym-style harness. <strong>Every control moved the scene the right way.</strong> But walk four seconds forward and back, or turn away and look back, and <strong>the room you return to is not the room you left</strong> — in both models.</p>
+    <p class="lede">We drove Reactor’s three navigable world models through a Gym-style harness. <strong>The controls work.</strong> But walk forward and back, or turn away and look back, and <strong>none of them reliably brings you back to the view you left.</strong></p>
     <dl class="spec">
-      <div><dt class="label">Models</dt><dd>LingBot World 2 (<code>reactor/lingbot-world-2</code>), two runs · LingBot v1 (<code>reactor/lingbot</code>), two runs</dd></div>
+      <div><dt class="label">Models</dt><dd>LingBot World 2 (<code>reactor/lingbot-world-2</code>), two runs · LingBot v1 (<code>reactor/lingbot</code>), two runs · HappyOyster Adventure (<code>reactor/happy-oyster-adventure</code>), one run per test</dd></div>
       <div><dt class="label">Anchor</dt><dd>A photo of the prize slide on the wall at the venue</dd></div>
       <div><dt class="label">Prompt</dt><dd>“a large wall-mounted TV showing a hackathon prize slide in a modern office event space, cool daylight, photoreal”</dd></div>
       <div><dt class="label">Seed</dt><dd>42</dd></div>
-      <div><dt class="label">Frames</dt><dd>1664 × 960 at 42–48 fps, scored at 320 px wide</dd></div>
+      <div><dt class="label">Frames</dt><dd>LingBot 1664 × 960 at 42–48 fps; HappyOyster 848 × 480 at 11–20 fps; all scored at 320 px wide</dd></div>
       <div><dt class="label">Similarity</dt><dd>½ SSIM + ½ ORB inlier ratio, from 0 (unrelated) to 1 (identical)</dd></div>
     </dl>
   </header>
@@ -370,15 +377,26 @@
             <td><span class="na">not run</span></td>
             <td class="runs">2</td>
           </tr>
+          <tr>
+            <th scope="row">HappyOyster Adventure<small>reactor/happy-oyster-adventure</small></th>
+            <td><span class="mark flat" aria-hidden="true">–</span>0.67<span class="range">4 of 6 · wall blocks forward</span></td>
+            <td><span class="mark good" aria-hidden="true">✓</span>0.95</td>
+            <td><span class="mark bad" aria-hidden="true">✕</span>0.22</td>
+            <td><span class="mark bad" aria-hidden="true">✕</span>0.30</td>
+            <td><span class="na">no prompt control</span></td>
+            <td class="runs">2</td>
+          </tr>
         </tbody>
       </table>
     </div>
+    <p class="models-note">HappyOyster streams 11–20 fps to the harness against about 45 for LingBot, so its 192-frame holds last about 11 seconds instead of 4. One run per test; its controls test ran at half length to fit the 2-minute travel limit.</p>
     <div class="panel">
       <div class="legend">
         <span class="key"><i class="swatch a"></i>World 2 · run A, full suite, 14:17</span>
         <span class="key"><i class="swatch b"></i>World 2 · run B, closure probes only, 14:21</span>
         <span class="key"><i class="swatch d"></i>v1 · run 1, full suite, 15:40</span>
         <span class="key"><i class="swatch c"></i>v1 · run 2, closure probes only, 15:59</span>
+        <span class="key"><i class="swatch e"></i>HappyOyster · one run per test, 16:12–16:14</span>
       </div>
 
       <div class="row axis" aria-hidden="true">
@@ -396,8 +414,11 @@
           <div class="lane"><span class="lane-label">v1</span><div class="track">
             <button class="dot d" style="--x:1" data-tip="v1 · run 1 · 1.00 · all 6 actions moved the scene the expected way" aria-label="v1, run 1: 1.00"></button>
           </div></div>
+          <div class="lane"><span class="lane-label">HappyOyster</span><div class="track">
+            <button class="dot e" style="--x:.6667" data-tip="HappyOyster · 0.67 · 4 of 6 actions; forward was blocked by the wall, strafe left barely moved" aria-label="HappyOyster: 0.67"></button>
+          </div></div>
         </div>
-        <div class="vals"><span>1.00</span><span>1.00</span></div>
+        <div class="vals"><span>1.00</span><span>1.00</span><span>0.67</span></div>
         <div class="verdict good"><span class="ic" aria-hidden="true">✓</span>responds</div>
       </div>
 
@@ -412,8 +433,11 @@
             <button class="dot d" style="--x:.8026" data-tip="v1 · run 1 · 0.80 · mean similarity to the first frame; ends at 0.74" aria-label="v1, run 1: 0.80"></button>
             <button class="dot c" style="--x:.8036" data-tip="v1 · run 2 · 0.80 · mean similarity to the first frame; ends at 0.74" aria-label="v1, run 2: 0.80"></button>
           </div></div>
+          <div class="lane"><span class="lane-label">HappyOyster</span><div class="track">
+            <button class="dot e" style="--x:.9487" data-tip="HappyOyster · 0.95 · mean similarity to the first frame; ends at 0.93" aria-label="HappyOyster: 0.95"></button>
+          </div></div>
         </div>
-        <div class="vals"><span>0.84 · 0.84</span><span>0.80 · 0.80</span></div>
+        <div class="vals"><span>0.84 · 0.84</span><span>0.80 · 0.80</span><span>0.95</span></div>
         <div class="verdict good"><span class="ic" aria-hidden="true">✓</span>holds</div>
       </div>
 
@@ -428,8 +452,11 @@
             <button class="dot d" style="--x:.1114" data-tip="v1 · run 1 · 0.11 · SSIM 0.22 · ORB 0.01" aria-label="v1, run 1: 0.11"></button>
             <button class="dot c" style="--x:.1371" data-tip="v1 · run 2 · 0.14 · SSIM 0.24 · ORB 0.03" aria-label="v1, run 2: 0.14"></button>
           </div></div>
+          <div class="lane"><span class="lane-label">HappyOyster</span><div class="track">
+            <button class="dot e" style="--x:.2228" data-tip="HappyOyster · 0.22 · SSIM 0.45 · ORB 0.00" aria-label="HappyOyster: 0.22"></button>
+          </div></div>
         </div>
-        <div class="vals"><span>0.13 · 0.17</span><span>0.11 · 0.14</span></div>
+        <div class="vals"><span>0.13 · 0.17</span><span>0.11 · 0.14</span><span>0.22</span></div>
         <div class="verdict bad"><span class="ic" aria-hidden="true">✕</span>doesn’t return</div>
       </div>
 
@@ -444,8 +471,11 @@
             <button class="dot d" style="--x:.1190" data-tip="v1 · run 1 · 0.12 · SSIM 0.24 · ORB 0.00" aria-label="v1, run 1: 0.12"></button>
             <button class="dot c" style="--x:.1976" data-tip="v1 · run 2 · 0.20 · SSIM 0.38 · ORB 0.01" aria-label="v1, run 2: 0.20"></button>
           </div></div>
+          <div class="lane"><span class="lane-label">HappyOyster</span><div class="track">
+            <button class="dot e" style="--x:.2992" data-tip="HappyOyster · 0.30 · SSIM 0.55 · ORB 0.05" aria-label="HappyOyster: 0.30"></button>
+          </div></div>
         </div>
-        <div class="vals"><span>0.07 · 0.18</span><span>0.12 · 0.20</span></div>
+        <div class="vals"><span>0.07 · 0.18</span><span>0.12 · 0.20</span><span>0.30</span></div>
         <div class="verdict bad"><span class="ic" aria-hidden="true">✕</span>doesn’t return</div>
       </div>
 
@@ -453,12 +483,12 @@
         <summary>Show the numbers as a table</summary>
         <div class="scroll">
           <table>
-            <thead><tr><th>Probe</th><th>World 2 · A</th><th>World 2 · B</th><th>v1 · 1</th><th>v1 · 2</th><th>SSIM (same order)</th><th>ORB (same order)</th></tr></thead>
+            <thead><tr><th>Probe</th><th>World 2 · A</th><th>World 2 · B</th><th>v1 · 1</th><th>v1 · 2</th><th>HappyOyster</th><th>SSIM (same order)</th><th>ORB (same order)</th></tr></thead>
             <tbody>
-              <tr><td>Controls respond</td><td class="num">1.00</td><td class="num">—</td><td class="num">1.00</td><td class="num">—</td><td colspan="2">6 of 6 actions correct in both models</td></tr>
-              <tr><td>Standing still</td><td class="num">0.84</td><td class="num">0.84</td><td class="num">0.80</td><td class="num">0.80</td><td colspan="2">mean similarity over 144 frames</td></tr>
-              <tr><td>Turn away and back</td><td class="num">0.13</td><td class="num">0.17</td><td class="num">0.11</td><td class="num">0.14</td><td class="num">0.26 / 0.23 / 0.22 / 0.24</td><td class="num">0.00 / 0.11 / 0.01 / 0.03</td></tr>
-              <tr><td>Walk forward and back</td><td class="num">0.07</td><td class="num">0.18</td><td class="num">0.12</td><td class="num">0.20</td><td class="num">0.14 / 0.35 / 0.24 / 0.38</td><td class="num">0.00 / 0.02 / 0.00 / 0.01</td></tr>
+              <tr><td>Controls respond</td><td class="num">1.00</td><td class="num">—</td><td class="num">1.00</td><td class="num">—</td><td class="num">0.67</td><td colspan="2">LingBot 6 of 6 · HappyOyster 4 of 6</td></tr>
+              <tr><td>Standing still</td><td class="num">0.84</td><td class="num">0.84</td><td class="num">0.80</td><td class="num">0.80</td><td class="num">0.95</td><td colspan="2">mean similarity over 144 frames</td></tr>
+              <tr><td>Turn away and back</td><td class="num">0.13</td><td class="num">0.17</td><td class="num">0.11</td><td class="num">0.14</td><td class="num">0.22</td><td class="num">0.26 / 0.23 / 0.22 / 0.24 / 0.45</td><td class="num">0.00 / 0.11 / 0.01 / 0.03 / 0.00</td></tr>
+              <tr><td>Walk forward and back</td><td class="num">0.07</td><td class="num">0.18</td><td class="num">0.12</td><td class="num">0.20</td><td class="num">0.30</td><td class="num">0.14 / 0.35 / 0.24 / 0.38 / 0.55</td><td class="num">0.00 / 0.02 / 0.00 / 0.01 / 0.05</td></tr>
             </tbody>
           </table>
         </div>
@@ -534,13 +564,14 @@
       </ul>
       <h3 class="later">Also seen</h3>
       <ul class="notes">
+        <li>HappyOyster, which promises permanent worlds, holds best — 0.95 standing still, 0.30 walking back — and stops at the wall where LingBot walks through the screen. Backing out returns the same wall and TV but not the slide on it, and turning away and back lands in an open hall with two people who weren’t there.</li>
         <li>LingBot v1 fails the same way. Walking into its wall screen leads through a wall of posters into a bigger office; turning back lands in a room with a meeting table that wasn’t there.</li>
         <li>The prompt only takes over when you move. The slide photo with a “quiet residential street” prompt turns into a street within seconds of walking — but swapping to a “night, lights off” prompt while standing still changed the picture no more than normal drift over 10 seconds.</li>
       </ul>
     </div>
   </section>
 
-  <footer>WorldGym, built at WORLDS | LONDON on 12 Sept 2026. Runs <code>lbw2-venue-slide</code>, <code>lbw2-venue-slide-2</code>, <code>lbw2-venue-slide-prompt</code>, <code>lb1-venue-slide</code> and <code>lb1-venue-slide-2</code>. Drive the model yourself at worldgym-900.pages.dev/webxr (passcode required).</footer>
+  <footer>WorldGym, built at WORLDS | LONDON on 12 Sept 2026. Runs <code>lbw2-venue-slide</code>, <code>lbw2-venue-slide-2</code>, <code>lbw2-venue-slide-prompt</code>, <code>lb1-venue-slide</code>, <code>lb1-venue-slide-2</code>, <code>ho-venue-slide</code> and <code>ho-venue-slide-ctrl</code>. Drive the model yourself at worldgym-900.pages.dev/webxr (passcode required).</footer>
 </main>
 <div id="tip" class="tip" role="tooltip" hidden></div>
 

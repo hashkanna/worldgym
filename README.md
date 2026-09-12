@@ -15,8 +15,12 @@ Same photo (the prize slide at the WORLDS | LONDON venue), same prompt, seed 42.
 |---|---|---|---|---|---|---|
 | LingBot World 2 | 1.00 | 0.84 | 0.15 (0.13–0.17) | 0.13 (0.07–0.18) | ignored | 3 |
 | LingBot v1 | 1.00 | 0.80 | 0.12 (0.11–0.14) | 0.16 (0.12–0.20) | not run | 2 |
+| HappyOyster Adventure | 0.67 (4 of 6; the wall blocks forward) | 0.95 | 0.22 | 0.30 | no prompt control | 2 |
 
-- Every control moves the scene the right way, but motion starts 2–3 seconds after the command.
+- LingBot's controls work every time but land 2–3 seconds late; HappyOyster's work wherever nothing blocks them.
+- HappyOyster, which promises permanent worlds, holds best and stops at the wall where LingBot walks
+  through the screen — but turning away and back still lands somewhere new. It streams 11–20 fps to
+  the harness against about 45 for LingBot, so its 192-frame holds last longer in real time.
 - Standing still holds. Walk away and back, or turn away and back, and you land in a re-imagined
   room: walking into the wall TV takes you through the screen into another office, and walking
   back never brings the slide back.

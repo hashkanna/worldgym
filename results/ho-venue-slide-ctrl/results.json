@@ -1,0 +1,120 @@
+{
+  "model": "reactor/happy-oyster-adventure",
+  "created": "2026-09-12T16:14:12",
+  "env": {
+    "model": "reactor/happy-oyster-adventure",
+    "steps": 12,
+    "time_to_first_frame_s": 32.825,
+    "backend": {
+      "dropped_frames": 108,
+      "world_build_s": 16.01,
+      "travel_to_first_frame_s": 5.95,
+      "video": "848x480",
+      "max_experience_time_s": 120,
+      "encrypted_world_id": "dHpmaEU0lINZtc81EZgHEghcSrG1Dhh34ZJShshV_dw"
+    }
+  },
+  "probes": [
+    {
+      "name": "controllability",
+      "score": 0.6667,
+      "details": {
+        "per_action": {
+          "forward": {
+            "ok": false,
+            "flow": {
+              "dx": 0.004,
+              "dy": 0.0,
+              "mag": 0.056,
+              "div": -0.001
+            },
+            "expected": {
+              "div": 1
+            },
+            "onset_frame": 32,
+            "fps": 20.2
+          },
+          "back": {
+            "ok": true,
+            "flow": {
+              "dx": 0.093,
+              "dy": 0.451,
+              "mag": 2.636,
+              "div": -2.469
+            },
+            "expected": {
+              "div": -1
+            },
+            "onset_frame": 30,
+            "fps": 20.2
+          },
+          "strafe_left": {
+            "ok": false,
+            "flow": {
+              "dx": 0.017,
+              "dy": 0.047,
+              "mag": 0.073,
+              "div": 0.002
+            },
+            "expected": {
+              "dx": 1
+            },
+            "onset_frame": 28,
+            "fps": 19.5
+          },
+          "strafe_right": {
+            "ok": true,
+            "flow": {
+              "dx": -7.191,
+              "dy": 0.022,
+              "mag": 7.223,
+              "div": -0.193
+            },
+            "expected": {
+              "dx": -1
+            },
+            "onset_frame": 26,
+            "fps": 16.5
+          },
+          "look_left": {
+            "ok": true,
+            "flow": {
+              "dx": 9.092,
+              "dy": 0.074,
+              "mag": 9.619,
+              "div": -0.415
+            },
+            "expected": {
+              "dx": 1
+            },
+            "onset_frame": 20,
+            "fps": 16.0
+          },
+          "look_right": {
+            "ok": true,
+            "flow": {
+              "dx": -11.391,
+              "dy": -0.168,
+              "mag": 11.922,
+              "div": 1.936
+            },
+            "expected": {
+              "dx": -1
+            },
+            "onset_frame": 20,
+            "fps": 13.7
+          }
+        },
+        "mean_onset_frames": 26.0,
+        "n_frames": 120
+      },
+      "flags": [],
+      "wall_seconds": 59.59,
+      "n_frames": 720,
+      "gif": "controllability.gif",
+      "first_png": "controllability_first.png",
+      "last_png": "controllability_last.png"
+    }
+  ],
+  "overall": 0.6667
+}

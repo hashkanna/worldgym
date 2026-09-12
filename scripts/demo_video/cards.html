@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>WorldGym demo cards</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,400..800&family=Martian+Mono:wght@400;500&display=swap">
+<style>
+  /* 1920x1080 frames for the demo video, in the findings page's dark palette */
+  :root {
+    --paper: #111325; --panel: #171a2e; --ink: #eceefd; --ink-2: #b6bad8; --muted: #8a8fb2;
+    --rule: #2a2e4a; --w2: #8e9bff; --good: #0ca30c; --critical: #d03b3b;
+    --sans: "Archivo", "Helvetica Neue", Arial, sans-serif;
+    --mono: "Martian Mono", ui-monospace, Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; }
+  body { background: var(--paper); color: var(--ink); font-family: var(--sans); }
+  body.caption { background: transparent; }
+  .card { display: none; position: absolute; inset: 0; padding: 130px 150px; }
+  .card.on { display: grid; }
+  .eyebrow { font-family: var(--mono); font-size: 24px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 0; }
+  h1, h2 { margin: 0; font-stretch: 125%; font-weight: 800; letter-spacing: -0.015em; text-wrap: balance; }
+
+  /* title */
+  #title { align-content: center; gap: 44px; }
+  #title h1 { font-size: 150px; line-height: 0.98; max-width: 1500px; }
+  #title p.sub { margin: 0; font-size: 46px; line-height: 1.3; color: var(--ink-2); max-width: 1400px; }
+
+  /* how it works */
+  #how { align-content: center; gap: 46px; }
+  #how h2 { font-size: 84px; line-height: 1.02; }
+  #how h2 span { color: var(--w2); white-space: nowrap; }
+  #how.step-1 .tests, #how.step-1 .foot { visibility: hidden; }
+  .loop { font-family: var(--mono); font-size: 34px; color: var(--ink); background: var(--panel); border: 1px solid var(--rule); border-radius: 12px; padding: 26px 34px; width: max-content; }
+  .loop i { font-style: normal; color: var(--muted); padding-inline: 18px; }
+  .tests { display: grid; grid-template-columns: 1fr 1fr; gap: 26px 60px; max-width: 1560px; }
+  .test { border-top: 2px solid var(--rule); padding-top: 20px; }
+  .test b { display: block; font-size: 44px; font-stretch: 112%; font-weight: 700; }
+  .test span { display: block; margin-top: 6px; font-size: 30px; color: var(--ink-2); }
+  .foot { font-family: var(--mono); font-size: 26px; color: var(--muted); }
+
+  /* close */
+  #close { align-content: center; gap: 36px; }
+  #close .url { font-family: var(--mono); font-size: 92px; font-weight: 500; letter-spacing: -0.02em; }
+  #close .sub { font-size: 48px; color: var(--ink-2); margin: 0; }
+  #close .fine { font-size: 30px; color: var(--muted); margin: 0; }
+
+  /* model table framed for video */
+  #table { align-content: center; justify-items: center; gap: 34px; padding: 80px 70px; }
+  #table .head { width: 100%; max-width: 1780px; display: grid; gap: 12px; }
+  #table h2 { font-size: 62px; }
+  #table img { display: block; max-width: 1780px; max-height: 720px; border-radius: 10px; }
+  #table .key { font-family: var(--mono); font-size: 24px; color: var(--muted); width: 100%; max-width: 1780px; }
+  #table .key b { font-family: var(--sans); color: #fff; display: inline-grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; font-size: 17px; margin-right: 10px; vertical-align: 3px; }
+
+  /* lower-third caption over footage (transparent frame) */
+  #caption { padding: 0; }
+  #caption .bar { position: absolute; left: 70px; bottom: 70px; max-width: 1500px; padding: 24px 34px 26px; border-radius: 14px; background: rgba(17, 19, 37, 0.84); display: grid; gap: 10px; }
+  #caption .eyebrow { color: var(--w2); font-size: 22px; }
+  #caption .text { font-size: 42px; line-height: 1.2; font-weight: 600; }
+</style>
+</head>
+<body>
+  <section class="card" id="title">
+    <p class="eyebrow">WorldGym · WORLDS | LONDON · 12 Sept 2026</p>
+    <h1>Does the world come back?</h1>
+    <p class="sub">A live world model looks incredible for a few seconds. Can you trust it as a simulator?</p>
+  </section>
+
+  <section class="card" id="how">
+    <h2>WorldGym: <span>a test rig</span> for world models</h2>
+    <div class="loop">reset(photo, prompt, seed)<i>→</i>step("forward", 192 frames)<i>→</i>frames</div>
+    <div class="tests">
+      <div class="test"><b>Stand still</b><span>144 frames idle — does the picture hold?</span></div>
+      <div class="test"><b>Press each control</b><span>6 actions — does the scene move the right way?</span></div>
+      <div class="test"><b>Walk forward and back</b><span>192 frames out, 192 back — are you home?</span></div>
+      <div class="test"><b>Turn away and look back</b><span>left 192, right 192 — same room?</span></div>
+    </div>
+    <p class="foot">Scored 0–1 against the frame where each test started · SSIM + ORB feature matching</p>
+  </section>
+
+  <section class="card" id="table">
+    <div class="head">
+      <p class="eyebrow">Scores by model · same photo, prompt and seed</p>
+      <h2>Similarity to where each test started, 0 to 1</h2>
+    </div>
+    <img id="table-img" alt="">
+    <p class="key"><b style="background: var(--good)">✓</b>holds or responds &nbsp;&nbsp;&nbsp; <b style="background: var(--critical)">✕</b>doesn’t return &nbsp;&nbsp;&nbsp; averages across runs, ranges underneath</p>
+  </section>
+
+  <section class="card" id="close">
+    <p class="eyebrow">Findings · scorecard · live viewer</p>
+    <div class="url">worldgym-900.pages.dev</div>
+    <p class="sub">A number for the gap between a beautiful video model and a simulator you can trust.</p>
+    <p class="fine">Built at WORLDS | LONDON on Reactor</p>
+  </section>
+
+  <section class="card" id="caption">
+    <div class="bar"><span class="eyebrow" id="cap-eyebrow"></span><span class="text" id="cap-text"></span></div>
+  </section>
+
+<script>
+  const q = new URLSearchParams(location.search);
+  const card = q.get("card") || "title";
+  document.getElementById(card).classList.add("on");
+  if (q.get("step")) document.getElementById(card).classList.add("step-" + q.get("step"));
+  if (card === "caption") {
+    document.body.classList.add("caption");
+    document.getElementById("cap-eyebrow").textContent = q.get("eyebrow") || "";
+    document.getElementById("cap-text").textContent = q.get("text") || "";
+  }
+  if (card === "table") document.getElementById("table-img").src = q.get("img");
+</script>
+</body>
+</html>

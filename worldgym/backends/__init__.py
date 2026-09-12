@@ -35,6 +35,10 @@ def make_backend(kind: str = "reactor", model: str | None = None, **kw: Any) -> 
 
         return FakeBackend(model=model or "fake/lingbot-world-2", **kw)
     if kind == "reactor":
+        if model and "happy-oyster" in model:  # controls + video go through the HappyOyster Web SDK
+            from .happy_oyster_backend import HappyOysterBackend
+
+            return HappyOysterBackend(model=model, **kw)
         from .reactor_backend import ReactorBackend
 
         return ReactorBackend(model=model or "reactor/lingbot-world-2", **kw)

@@ -1,0 +1,15 @@
+{
+  "name": "worldgym-happy-oyster-bridge",
+  "private": true,
+  "description": "Browser bundle of the HappyOyster Web SDK for worldgym/backends/happy_oyster_backend.py",
+  "scripts": {
+    "build": "esbuild entry.js --bundle --format=iife --platform=browser --minify --define:process.env.NODE_ENV='\"production\"' '--external:*/wasm/reactor_wasm.js' --outfile=happy-oyster.bundle.js && mkdir -p wasm && cp node_modules/@reactor-team/js-sdk/dist/wasm/reactor_wasm.js node_modules/@reactor-team/js-sdk/dist/wasm/reactor_wasm_bg.wasm wasm/"
+  },
+  "dependencies": {
+    "@reactor-models/happy-oyster": "1.0.0",
+    "react": "18.3.1"
+  },
+  "devDependencies": {
+    "esbuild": ">=0.20"
+  }
+}

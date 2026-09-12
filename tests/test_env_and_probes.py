@@ -20,6 +20,7 @@ from worldgym.backends.fake_backend import FakeBackend  # noqa: E402
 from worldgym.probes import (  # noqa: E402
     controllability,
     loop_closure,
+    prompt_stability,
     rotation_closure,
     run_suite,
     stillness,
@@ -147,6 +148,19 @@ class ProbeTest(unittest.TestCase):
                 lc = await loop_closure(env, "idle", n_frames=24)
                 self.assertIn("no_motion", lc.flags)
                 self.assertEqual(lc.score, 0.0)
+            finally:
+                await env.close()
+
+        run(go())
+
+    def test_ignored_prompt_is_flagged_not_rewarded(self):
+        async def go():
+            env = await _env()
+            try:
+                # the fake world never restyles, so its layout would "survive" trivially
+                ps = await prompt_stability(env, "the same place at night", n_frames=24)
+                self.assertIn("no_restyle", ps.flags)
+                self.assertEqual(ps.score, 0.0)
             finally:
                 await env.close()
 

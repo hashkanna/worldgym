@@ -1,5 +1,5 @@
 <title>Does the world come back?</title>
-<meta name="description" content="WorldGym probe results for LingBot World 2 on Reactor.">
+<meta name="description" content="WorldGym probe results for LingBot World 2 and LingBot v1 on Reactor.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,400..800&family=Martian+Mono:wght@400;500&display=swap">
@@ -12,8 +12,8 @@
     --ink-2: #4b4e6a;
     --muted: #6e7190;
     --rule: #dfe0ea;
-    --run-a: #c98200;
-    --run-b: #4453c9;
+    --w2: #4453c9;
+    --v1: #c98200;
     --good: #0ca30c;
     --critical: #d03b3b;
     --sans: "Archivo", "Helvetica Neue", Arial, sans-serif;
@@ -28,8 +28,8 @@
       --ink-2: #b6bad8;
       --muted: #8a8fb2;
       --rule: #2a2e4a;
-      --run-a: #c38612;
-      --run-b: #6f7ef0;
+      --w2: #6f7ef0;
+      --v1: #c38612;
     }
   }
   :root[data-theme="dark"] {
@@ -40,8 +40,8 @@
     --ink-2: #b6bad8;
     --muted: #8a8fb2;
     --rule: #2a2e4a;
-    --run-a: #c38612;
-    --run-b: #6f7ef0;
+    --w2: #6f7ef0;
+    --v1: #c38612;
   }
 
   * { box-sizing: border-box; }
@@ -112,25 +112,29 @@
   .legend { display: flex; flex-wrap: wrap; gap: 8px 22px; margin-bottom: 14px; font-size: 0.9rem; color: var(--ink-2); }
   .key { display: inline-flex; align-items: center; gap: 8px; }
   .swatch { display: inline-block; flex: none; border-radius: 50%; }
-  .swatch.a { width: 14px; height: 14px; border: 3px solid var(--run-a); }
-  .swatch.b { width: 10px; height: 10px; background: var(--run-b); }
+  .swatch.a { width: 14px; height: 14px; border: 3px solid var(--w2); }
+  .swatch.b { width: 10px; height: 10px; background: var(--w2); }
+  .swatch.c { width: 10px; height: 10px; background: var(--v1); border-radius: 2px; }
 
   .row {
     display: grid;
-    grid-template-columns: minmax(10rem, 12.5rem) minmax(0, 1fr) 6.5rem 9rem;
+    grid-template-columns: minmax(10rem, 12.5rem) minmax(0, 1fr) 7rem 9rem;
     grid-template-areas: "probe track vals verdict";
     align-items: center;
     gap: 10px 18px;
-    padding-block: 14px;
+    padding-block: 12px;
     border-top: 1px solid var(--rule);
   }
   .row.axis { border-top: 0; padding-block: 0 8px; }
   .probe { grid-area: probe; display: grid; gap: 2px; }
   .probe .name { font-weight: 600; }
   .probe .how { font-size: 0.82rem; color: var(--muted); }
-  .track, .scale { grid-area: track; position: relative; margin-inline: 10px; }
+  .lanes { grid-area: track; display: grid; gap: 4px; }
+  .lane { display: grid; grid-template-columns: 3.4rem minmax(0, 1fr); align-items: center; gap: 4px; }
+  .lane-label { font-family: var(--mono); font-size: 10.5px; color: var(--muted); }
+  .track, .scale { position: relative; margin-inline: 10px; }
   .track {
-    height: 30px;
+    height: 24px;
     background-image: linear-gradient(to right, var(--rule) 1px, transparent 1px);
     background-size: 25% 100%;
     box-shadow: inset -1px 0 var(--rule);
@@ -154,22 +158,26 @@
     padding: 0;
     cursor: default;
   }
-  .dot::before { content: ""; position: absolute; inset: -9px; border-radius: 50%; }
-  .dot.a { width: 18px; height: 18px; border: 3px solid var(--run-a); background: var(--panel); }
-  .dot.b { width: 12px; height: 12px; border: 2px solid var(--panel); background: var(--run-b); }
+  .dot::before { content: ""; position: absolute; inset: -8px; border-radius: 50%; }
+  .dot.a { width: 18px; height: 18px; border: 3px solid var(--w2); background: var(--panel); }
+  .dot.b { width: 12px; height: 12px; border: 2px solid var(--panel); background: var(--w2); }
+  .dot.c { width: 12px; height: 12px; border: 2px solid var(--panel); background: var(--v1); border-radius: 3px; }
   .dot:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
   .vals {
     grid-area: vals;
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-rows: repeat(2, 24px);
+    gap: 4px;
+    align-items: center;
     text-align: right;
     font-family: var(--mono);
-    font-size: 0.9rem;
+    font-size: 0.86rem;
     font-variant-numeric: tabular-nums;
+    white-space: nowrap;
   }
-  .vals .none { color: var(--muted); }
-  .axis .vals, .axis .vh { font-family: var(--mono); font-size: 11px; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; }
+  .axis .vh, .axis .vh-score { font-family: var(--mono); font-size: 11px; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; }
   .vh { grid-area: verdict; }
+  .vh-score { grid-area: vals; text-align: right; }
   .verdict {
     grid-area: verdict;
     justify-self: start;
@@ -193,7 +201,7 @@
   .table-view summary { cursor: pointer; color: var(--ink-2); width: max-content; }
   .table-view summary:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
   .scroll { overflow-x: auto; margin-top: 12px; }
-  table { border-collapse: collapse; min-width: 34rem; width: 100%; }
+  table { border-collapse: collapse; min-width: 40rem; width: 100%; }
   th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--rule); vertical-align: top; }
   th { font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
   td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
@@ -266,6 +274,7 @@
   .notes { margin: 0; padding-left: 1.1em; display: grid; gap: 12px; color: var(--ink-2); font-size: 0.95rem; }
   .notes li::marker { color: var(--muted); }
   .method h3 { margin-bottom: 14px; }
+  .method .later { margin-top: 28px; }
   code { font-family: var(--mono); font-size: 0.82em; }
 
   footer { border-top: 1px solid var(--rule); padding-top: 18px; color: var(--muted); font-size: 0.85rem; max-width: 48rem; }
@@ -280,11 +289,11 @@
       grid-template-areas: "probe verdict" "track track" "vals vals";
     }
     .row.axis { grid-template-areas: "track track"; }
-    .axis .vals, .axis .vh { display: none; }
-    .vals { grid-template-columns: auto auto; justify-content: start; gap: 18px; text-align: left; }
+    .axis .vh, .axis .vh-score { display: none; }
+    .vals { grid-template-rows: none; grid-template-columns: auto auto; justify-content: start; gap: 18px; text-align: left; }
     .vals span::before { font-size: 11px; color: var(--muted); margin-right: 6px; }
-    .vals span:first-child::before { content: "A"; }
-    .vals span:last-child::before { content: "B"; }
+    .vals span:first-child::before { content: "World 2"; }
+    .vals span:last-child::before { content: "v1"; }
     .frames.three { --cols: 2; }
     .spec { grid-template-columns: minmax(0, 1fr); gap: 2px; }
     .spec dd { margin-bottom: 10px; }
@@ -293,14 +302,15 @@
 
 <main class="page">
   <header class="head">
-    <p class="meta">Reactor · reactor/lingbot-world-2 · WORLDS | LONDON · 12 Sept 2026</p>
+    <p class="meta">Reactor · LingBot World 2 and LingBot v1 · WORLDS | LONDON · 12 Sept 2026</p>
     <h1>Does the world come back?</h1>
-    <p class="lede">We drove a live world model through a Gym-style harness. <strong>Every control moved the scene the right way.</strong> But walk four seconds forward and back, or turn away and look back, and <strong>the room you return to is not the room you left.</strong></p>
+    <p class="lede">We drove two live world models through a Gym-style harness. <strong>Every control moved the scene the right way.</strong> But walk four seconds forward and back, or turn away and look back, and <strong>the room you return to is not the room you left</strong> — in both models.</p>
     <dl class="spec">
+      <div><dt class="label">Models</dt><dd>LingBot World 2 (<code>reactor/lingbot-world-2</code>), two runs · LingBot v1 (<code>reactor/lingbot</code>), one run</dd></div>
       <div><dt class="label">Anchor</dt><dd>A photo of the prize slide on the wall at the venue</dd></div>
       <div><dt class="label">Prompt</dt><dd>“a large wall-mounted TV showing a hackathon prize slide in a modern office event space, cool daylight, photoreal”</dd></div>
       <div><dt class="label">Seed</dt><dd>42</dd></div>
-      <div><dt class="label">Frames</dt><dd>1664 × 960 at 44–48 fps, scored at 320 px wide</dd></div>
+      <div><dt class="label">Frames</dt><dd>1664 × 960 at 42–48 fps, scored at 320 px wide</dd></div>
       <div><dt class="label">Similarity</dt><dd>½ SSIM + ½ ORB inlier ratio, from 0 (unrelated) to 1 (identical)</dd></div>
     </dl>
   </header>
@@ -312,52 +322,73 @@
     </div>
     <div class="panel">
       <div class="legend">
-        <span class="key"><i class="swatch a"></i>Run A · full suite, 14:17</span>
-        <span class="key"><i class="swatch b"></i>Run B · closure probes only, nothing else running, 14:21</span>
+        <span class="key"><i class="swatch a"></i>World 2 · run A, full suite, 14:17</span>
+        <span class="key"><i class="swatch b"></i>World 2 · run B, closure probes only, 14:21</span>
+        <span class="key"><i class="swatch c"></i>v1 · full suite, 15:40</span>
       </div>
 
       <div class="row axis" aria-hidden="true">
-        <div class="scale"><span style="--x:0">0</span><span style="--x:.25">0.25</span><span style="--x:.5">0.5</span><span style="--x:.75">0.75</span><span style="--x:1">1</span></div>
-        <div class="vals"><span>A</span><span>B</span></div>
+        <div class="lanes"><div class="lane"><span class="lane-label"></span><div class="scale"><span style="--x:0">0</span><span style="--x:.25">0.25</span><span style="--x:.5">0.5</span><span style="--x:.75">0.75</span><span style="--x:1">1</span></div></div></div>
+        <div class="vh-score">Score</div>
         <div class="vh">Verdict</div>
       </div>
 
       <div class="row">
         <div class="probe"><span class="name">Controls respond</span><span class="how">6 actions, 240 frames each</span></div>
-        <div class="track">
-          <button class="dot a" style="--x:1" data-tip="Run A · 1.00 · all 6 actions moved the scene the expected way; motion starts about 2–3 s after the command" aria-label="Run A: 1.00"></button>
+        <div class="lanes">
+          <div class="lane"><span class="lane-label">World 2</span><div class="track">
+            <button class="dot a" style="--x:1" data-tip="World 2 · run A · 1.00 · all 6 actions moved the scene the expected way, 2–3 s after the command" aria-label="World 2, run A: 1.00"></button>
+          </div></div>
+          <div class="lane"><span class="lane-label">v1</span><div class="track">
+            <button class="dot c" style="--x:1" data-tip="v1 · 1.00 · all 6 actions moved the scene the expected way" aria-label="v1: 1.00"></button>
+          </div></div>
         </div>
-        <div class="vals"><span>1.00</span><span class="none">—</span></div>
+        <div class="vals"><span>1.00</span><span>1.00</span></div>
         <div class="verdict good"><span class="ic" aria-hidden="true">✓</span>responds</div>
       </div>
 
       <div class="row">
         <div class="probe"><span class="name">Standing still</span><span class="how">144 frames idle</span></div>
-        <div class="track">
-          <button class="dot a" style="--x:.8362" data-tip="Run A · 0.84 · mean similarity to the first frame" aria-label="Run A: 0.84"></button>
-          <button class="dot b" style="--x:.8364" data-tip="Run B · 0.84 · mean similarity to the first frame" aria-label="Run B: 0.84"></button>
+        <div class="lanes">
+          <div class="lane"><span class="lane-label">World 2</span><div class="track">
+            <button class="dot a" style="--x:.8362" data-tip="World 2 · run A · 0.84 · mean similarity to the first frame" aria-label="World 2, run A: 0.84"></button>
+            <button class="dot b" style="--x:.8364" data-tip="World 2 · run B · 0.84 · mean similarity to the first frame" aria-label="World 2, run B: 0.84"></button>
+          </div></div>
+          <div class="lane"><span class="lane-label">v1</span><div class="track">
+            <button class="dot c" style="--x:.8026" data-tip="v1 · 0.80 · mean similarity to the first frame; ends at 0.74" aria-label="v1: 0.80"></button>
+          </div></div>
         </div>
-        <div class="vals"><span>0.84</span><span>0.84</span></div>
+        <div class="vals"><span>0.84 · 0.84</span><span>0.80</span></div>
         <div class="verdict good"><span class="ic" aria-hidden="true">✓</span>holds</div>
       </div>
 
       <div class="row">
         <div class="probe"><span class="name">Turn away and back</span><span class="how">look left 192 f, right 192 f</span></div>
-        <div class="track">
-          <button class="dot a" style="--x:.1311" data-tip="Run A · 0.13 · SSIM 0.26 · ORB 0.00" aria-label="Run A: 0.13"></button>
-          <button class="dot b" style="--x:.1688" data-tip="Run B · 0.17 · SSIM 0.23 · ORB 0.11" aria-label="Run B: 0.17"></button>
+        <div class="lanes">
+          <div class="lane"><span class="lane-label">World 2</span><div class="track">
+            <button class="dot a" style="--x:.1311" data-tip="World 2 · run A · 0.13 · SSIM 0.26 · ORB 0.00" aria-label="World 2, run A: 0.13"></button>
+            <button class="dot b" style="--x:.1688" data-tip="World 2 · run B · 0.17 · SSIM 0.23 · ORB 0.11" aria-label="World 2, run B: 0.17"></button>
+          </div></div>
+          <div class="lane"><span class="lane-label">v1</span><div class="track">
+            <button class="dot c" style="--x:.1114" data-tip="v1 · 0.11 · SSIM 0.22 · ORB 0.01" aria-label="v1: 0.11"></button>
+          </div></div>
         </div>
-        <div class="vals"><span>0.13</span><span>0.17</span></div>
+        <div class="vals"><span>0.13 · 0.17</span><span>0.11</span></div>
         <div class="verdict bad"><span class="ic" aria-hidden="true">✕</span>doesn’t return</div>
       </div>
 
       <div class="row">
         <div class="probe"><span class="name">Walk forward and back</span><span class="how">forward 192 f, back 192 f</span></div>
-        <div class="track">
-          <button class="dot a" style="--x:.0722" data-tip="Run A · 0.07 · SSIM 0.14 · ORB 0.00" aria-label="Run A: 0.07"></button>
-          <button class="dot b" style="--x:.1830" data-tip="Run B · 0.18 · SSIM 0.35 · ORB 0.02" aria-label="Run B: 0.18"></button>
+        <div class="lanes">
+          <div class="lane"><span class="lane-label">World 2</span><div class="track">
+            <button class="dot a" style="--x:.0722" data-tip="World 2 · run A · 0.07 · SSIM 0.14 · ORB 0.00" aria-label="World 2, run A: 0.07"></button>
+            <button class="dot b" style="--x:.1830" data-tip="World 2 · run B · 0.18 · SSIM 0.35 · ORB 0.02" aria-label="World 2, run B: 0.18"></button>
+          </div></div>
+          <div class="lane"><span class="lane-label">v1</span><div class="track">
+            <button class="dot c" style="--x:.1190" data-tip="v1 · 0.12 · SSIM 0.24 · ORB 0.00" aria-label="v1: 0.12"></button>
+          </div></div>
         </div>
-        <div class="vals"><span>0.07</span><span>0.18</span></div>
+        <div class="vals"><span>0.07 · 0.18</span><span>0.12</span></div>
         <div class="verdict bad"><span class="ic" aria-hidden="true">✕</span>doesn’t return</div>
       </div>
 
@@ -365,12 +396,12 @@
         <summary>Show the numbers as a table</summary>
         <div class="scroll">
           <table>
-            <thead><tr><th>Probe</th><th>Run A</th><th>Run B</th><th>SSIM A / B</th><th>ORB A / B</th></tr></thead>
+            <thead><tr><th>Probe</th><th>World 2 · A</th><th>World 2 · B</th><th>v1</th><th>SSIM A / B / v1</th><th>ORB A / B / v1</th></tr></thead>
             <tbody>
-              <tr><td>Controls respond</td><td class="num">1.00</td><td class="num">—</td><td colspan="2">6 of 6 actions correct · onset ≈ 119 frames</td></tr>
-              <tr><td>Standing still</td><td class="num">0.84</td><td class="num">0.84</td><td colspan="2">mean similarity over 144 frames</td></tr>
-              <tr><td>Turn away and back</td><td class="num">0.13</td><td class="num">0.17</td><td class="num">0.26 / 0.23</td><td class="num">0.00 / 0.11</td></tr>
-              <tr><td>Walk forward and back</td><td class="num">0.07</td><td class="num">0.18</td><td class="num">0.14 / 0.35</td><td class="num">0.00 / 0.02</td></tr>
+              <tr><td>Controls respond</td><td class="num">1.00</td><td class="num">—</td><td class="num">1.00</td><td colspan="2">6 of 6 actions correct in both models</td></tr>
+              <tr><td>Standing still</td><td class="num">0.84</td><td class="num">0.84</td><td class="num">0.80</td><td colspan="2">mean similarity over 144 frames</td></tr>
+              <tr><td>Turn away and back</td><td class="num">0.13</td><td class="num">0.17</td><td class="num">0.11</td><td class="num">0.26 / 0.23 / 0.22</td><td class="num">0.00 / 0.11 / 0.01</td></tr>
+              <tr><td>Walk forward and back</td><td class="num">0.07</td><td class="num">0.18</td><td class="num">0.12</td><td class="num">0.14 / 0.35 / 0.24</td><td class="num">0.00 / 0.02 / 0.00</td></tr>
             </tbody>
           </table>
         </div>
@@ -381,7 +412,7 @@
   <section aria-labelledby="sheets-h">
     <div class="sec-head">
       <h2 id="sheets-h">Contact sheets</h2>
-      <p>Frames straight from the sessions. Probe frame numbers count from the start of that probe.</p>
+      <p>Frames straight from the LingBot World 2 sessions. Probe frame numbers count from the start of that probe.</p>
     </div>
     <div class="sheets">
       <article class="sheet">
@@ -442,16 +473,17 @@
       <ul class="notes">
         <li>A 360° turn through <code>set_camera_pose</code>. On LingBot World 2 the pose is a per-latent-frame velocity bias, not a camera rig, so the “full turn” fell far short of a circle and its score measured a partial pan.</li>
         <li>A walk test that settled for only 96 frames. With commands landing 2–3 s late, the return leg was cut off before it finished.</li>
-        <li>Run A shared the machine with a second session during the controls probe, so its frame rate dipped. Run B ran on its own.</li>
+        <li>World 2 run A shared the machine with a second session during the controls probe, so its frame rate dipped. Run B and the v1 run each ran on their own.</li>
       </ul>
-      <h3 style="margin-top:28px">Also seen</h3>
+      <h3 class="later">Also seen</h3>
       <ul class="notes">
-        <li>Once you move, the prompt beats the photo: the same slide photo with a “quiet residential street” prompt turns into a street within seconds.</li>
+        <li>LingBot v1 fails the same way. Walking into its wall screen leads through a wall of posters into a bigger office; turning back lands in a room with a meeting table that wasn’t there.</li>
+        <li>The prompt only takes over when you move. The slide photo with a “quiet residential street” prompt turns into a street within seconds of walking — but swapping to a “night, lights off” prompt while standing still changed the picture no more than normal drift over 10 seconds.</li>
       </ul>
     </div>
   </section>
 
-  <footer>WorldGym, built at WORLDS | LONDON on 12 Sept 2026. Runs <code>lbw2-venue-slide</code> and <code>lbw2-venue-slide-2</code>. The same model also runs head-tracked on an Apple Vision Pro through WorldXR.</footer>
+  <footer>WorldGym, built at WORLDS | LONDON on 12 Sept 2026. Runs <code>lbw2-venue-slide</code>, <code>lbw2-venue-slide-2</code> and <code>lb1-venue-slide</code>. Drive the model yourself at worldgym-900.pages.dev/webxr (passcode required).</footer>
 </main>
 <div id="tip" class="tip" role="tooltip" hidden></div>
 

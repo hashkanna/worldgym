@@ -36,7 +36,7 @@ webxr/
   index.html          WorldXR viewer (three.js + Reactor JS SDK via esm.sh)
   serve.py            static server + /token endpoint (stdlib)
 modal_app.py          optional DINOv2 embedding endpoint on Modal
-tests/                18 offline tests (unittest/pytest) against the fake backend
+tests/                19 offline tests (unittest/pytest) against the fake backend
 ```
 
 ## Setup
@@ -45,7 +45,7 @@ tests/                18 offline tests (unittest/pytest) against the fake backen
 uv venv --python 3.13 .venv && source .venv/bin/activate   # or python -m venv; avoid Anaconda (its scipy breaks on recent macOS)
 uv pip install -e ".[dev]"         # reactor-sdk, opencv, scikit-image, imageio, pytest
 cp .env.example .env               # add REACTOR_API_KEY (dashboard at reactor.inc/dashboard)
-python -m pytest -q                 # 18 offline tests, ~15 s, no credits used
+python -m pytest -q                 # 19 offline tests, ~15 s, no credits used
 ```
 
 Everything below works offline first (`--backend fake`), so you can develop the
@@ -57,7 +57,7 @@ harness without spending credits, then flip to the live model.
 git clone https://github.com/hashkanna/worldgym && cd worldgym
 uv venv --python 3.13 .venv && source .venv/bin/activate && uv pip install -e ".[dev]"
 cp .env.example .env               # paste REACTOR_API_KEY — the key is never committed
-python -m pytest -q                # 18 offline tests
+python -m pytest -q                # 19 offline tests
 
 # live probes -> results/<run>/ and dashboard/index.html
 python scripts/run_probes.py --image assets/anchors/room.jpg \
@@ -139,7 +139,7 @@ Each run writes `results/<run>/results.json` + GIFs and rebuilds `dashboard/inde
 | `rotation_closure` | yaw 360° via `camera_pose` (fake backend only) | not in the live suite: on LingBot World 2 `camera_pose` is a velocity bias, so the turn isn't really 360° |
 | `stillness` | hold `idle` N frames | mean similarity to the anchor over the window |
 | `controllability` | hold each action; measure optical flow | fraction of actions whose flow sign matches (`strafe_left` → scene moves right, `forward` → expansion), plus onset latency in frames |
-| `prompt_stability` | hot-swap the prompt while idle | ORB feature survival (layout, not pixels) |
+| `prompt_stability` | idle N frames to measure drift, hot-swap the prompt, idle N more (N = 480 live) | ORB feature survival (layout, not pixels); **0 + flag `no_restyle`** if the swap changed the picture no more than idle drift |
 
 Similarity = ½·SSIM + ½·ORB-inlier-ratio (RANSAC-verified). Set `WORLDGYM_EMBED_URL`
 to a deployed `modal_app.py` to blend in DINOv2 cosine, which is far more forgiving of

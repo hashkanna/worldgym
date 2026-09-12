@@ -238,22 +238,34 @@ async def controllability(
     )
 
 
-async def prompt_stability(env: WorldEnv, new_prompt: str, n_frames: int = 96) -> ProbeResult:
-    """Hot-swap the prompt while idle; structure (edges) should survive, texture may not."""
+async def prompt_stability(
+    env: WorldEnv, new_prompt: str, n_frames: int = 96, margin: float = 0.05
+) -> ProbeResult:
+    """Hot-swap the prompt while idle; structure (edges) should survive, texture may not.
+
+    A still world drifts on its own, so first hold idle for n_frames to measure that drift,
+    then swap and hold for n_frames more. If the swap changed the picture no more than idle
+    drift did (SSIM within `margin`), the restyle never happened: score 0 with flag
+    `no_restyle` instead of rewarding a model that ignored the prompt."""
     t0 = time.monotonic()
     anchor = env.last_frame
     if anchor is None:
         raise RuntimeError("env has no frame yet; call reset() first")
+    base = await env.step("idle", n_frames)
+    ref = base.frames[-1] if base.frames else anchor
+    drift = metrics.similarity(anchor, ref)
     await env.set_prompt(new_prompt)
     res = await env.step("idle", n_frames)
-    end = res.frames[-1] if res.frames else anchor
-    sim = metrics.similarity(anchor, end)
+    end = res.frames[-1] if res.frames else ref
+    sim = metrics.similarity(ref, end)
+    flags = ["no_restyle"] if sim["ssim"] >= drift["ssim"] - margin else []
     return ProbeResult(
         name="prompt_stability",
-        score=sim["orb"],  # feature-level layout survival, not pixel similarity
-        details={"similarity": sim, "new_prompt": new_prompt, "n_frames": n_frames},
-        frames=[anchor] + res.frames,
+        score=0.0 if flags else sim["orb"],  # feature-level layout survival, not pixel similarity
+        details={"similarity": sim, "idle_drift": drift, "new_prompt": new_prompt, "n_frames": n_frames},
+        frames=[anchor] + base.frames + res.frames,
         wall_seconds=time.monotonic() - t0,
+        flags=flags,
     )
 
 

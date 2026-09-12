@@ -40,6 +40,8 @@ async def main() -> int:
     ap.add_argument("--run", default=None, help="run name (default: <model>-<timestamp>)")
     ap.add_argument("--no-pose", action="store_true", help="use held look/move instead of set_camera_pose")
     ap.add_argument("--short", action="store_true", help="halve frame counts (quicker, noisier)")
+    ap.add_argument("--new-prompt", default="the same scene at night in heavy rain, neon reflections",
+                    help="prompt_stability: the prompt swapped in mid-session")
     # fake-backend knobs
     ap.add_argument("--drift", type=float, default=0.0)
     ap.add_argument("--hallucination", type=float, default=0.0)
@@ -63,7 +65,8 @@ async def main() -> int:
                              "settle_frames": int((192 if live else 24) * scale)},
         "stillness": {"n_frames": int(144 * scale)},
         "controllability": {"n_frames": int((240 if live else 40) * scale), "settle_frames": int((96 if live else 8) * scale)},
-        "prompt_stability": {"new_prompt": "the same street at night in heavy rain, neon reflections", "n_frames": int(144 * scale)},
+        # a new prompt needs well past the 2-3 s command lag to show on a live model
+        "prompt_stability": {"new_prompt": args.new_prompt, "n_frames": int((480 if live else 48) * scale)},
     }
     run_name = args.run or f"{args.model.split('/')[-1]}-{time.strftime('%H%M%S')}"
     try:

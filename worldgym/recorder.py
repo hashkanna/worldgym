@@ -69,7 +69,8 @@ def save_run(
             entry["first_png"] = f"{_slug(r.name)}_first.png"
             entry["last_png"] = f"{_slug(r.name)}_last.png"
         payload["probes"].append(entry)
-    scores = [p["score"] for p in payload["probes"] if "no_motion" not in p.get("flags", [])]
+    void = {"no_motion", "no_restyle"}  # probes whose premise didn't happen don't count
+    scores = [p["score"] for p in payload["probes"] if not void & set(p.get("flags", []))]
     payload["overall"] = round(float(np.mean(scores)), 4) if scores else 0.0
     (out / "results.json").write_text(json.dumps(payload, indent=2))
     return out

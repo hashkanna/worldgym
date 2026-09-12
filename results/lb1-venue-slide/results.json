@@ -1,0 +1,211 @@
+{
+  "model": "reactor/lingbot",
+  "created": "2026-09-12T15:39:49",
+  "env": {
+    "model": "reactor/lingbot",
+    "steps": 19,
+    "time_to_first_frame_s": 1.898
+  },
+  "probes": [
+    {
+      "name": "stillness",
+      "score": 0.8026,
+      "details": {
+        "mean_similarity": 0.8026,
+        "end_similarity": 0.7416,
+        "curve": [
+          0.9882,
+          0.9442,
+          0.9279,
+          0.8982,
+          0.8958,
+          0.897,
+          0.8823,
+          0.869,
+          0.8844,
+          0.872,
+          0.8535,
+          0.8497,
+          0.842,
+          0.8275,
+          0.4036,
+          0.486,
+          0.6952,
+          0.7775,
+          0.7969,
+          0.7756,
+          0.7624,
+          0.7633,
+          0.7585,
+          0.74,
+          0.7353,
+          0.7416
+        ],
+        "n_frames": 144
+      },
+      "flags": [],
+      "wall_seconds": 4.41,
+      "n_frames": 153,
+      "gif": "stillness.gif",
+      "first_png": "stillness_first.png",
+      "last_png": "stillness_last.png"
+    },
+    {
+      "name": "controllability",
+      "score": 1.0,
+      "details": {
+        "per_action": {
+          "forward": {
+            "ok": true,
+            "flow": {
+              "dx": -0.317,
+              "dy": -0.003,
+              "mag": 2.552,
+              "div": 1.881
+            },
+            "expected": {
+              "div": 1
+            },
+            "onset_frame": 124,
+            "fps": 39.7
+          },
+          "back": {
+            "ok": true,
+            "flow": {
+              "dx": -0.267,
+              "dy": -0.574,
+              "mag": 1.88,
+              "div": -1.829
+            },
+            "expected": {
+              "div": -1
+            },
+            "onset_frame": 122,
+            "fps": 43.2
+          },
+          "strafe_left": {
+            "ok": true,
+            "flow": {
+              "dx": 1.092,
+              "dy": -0.007,
+              "mag": 1.099,
+              "div": 0.154
+            },
+            "expected": {
+              "dx": 1
+            },
+            "onset_frame": 124,
+            "fps": 43.2
+          },
+          "strafe_right": {
+            "ok": true,
+            "flow": {
+              "dx": -2.845,
+              "dy": 0.075,
+              "mag": 3.083,
+              "div": -0.965
+            },
+            "expected": {
+              "dx": -1
+            },
+            "onset_frame": 126,
+            "fps": 43.5
+          },
+          "look_left": {
+            "ok": true,
+            "flow": {
+              "dx": 3.681,
+              "dy": 0.028,
+              "mag": 3.699,
+              "div": 0.172
+            },
+            "expected": {
+              "dx": 1
+            },
+            "onset_frame": 44,
+            "fps": 43.3
+          },
+          "look_right": {
+            "ok": true,
+            "flow": {
+              "dx": -6.064,
+              "dy": 0.008,
+              "mag": 6.101,
+              "div": 0.298
+            },
+            "expected": {
+              "dx": -1
+            },
+            "onset_frame": 2,
+            "fps": 42.2
+          }
+        },
+        "mean_onset_frames": 90.33333333333333,
+        "n_frames": 240
+      },
+      "flags": [],
+      "wall_seconds": 66.38,
+      "n_frames": 1531,
+      "gif": "controllability.gif",
+      "first_png": "controllability_first.png",
+      "last_png": "controllability_last.png"
+    },
+    {
+      "name": "loop_closure[forward]",
+      "score": 0.119,
+      "details": {
+        "closure": {
+          "score": 0.119,
+          "ssim": 0.238,
+          "orb": 0.0
+        },
+        "closure_end": {
+          "score": 0.1057,
+          "ssim": 0.2114,
+          "orb": 0.0
+        },
+        "peak_frame": 409,
+        "excursion": {
+          "score": 0.1002
+        },
+        "moved": 0.8998,
+        "n_frames": 192
+      },
+      "flags": [],
+      "wall_seconds": 17.15,
+      "n_frames": 595,
+      "gif": "loop_closure_forward.gif",
+      "first_png": "loop_closure_forward_first.png",
+      "last_png": "loop_closure_forward_last.png"
+    },
+    {
+      "name": "turn_closure",
+      "score": 0.1114,
+      "details": {
+        "closure": {
+          "score": 0.1114,
+          "ssim": 0.2177,
+          "orb": 0.005
+        },
+        "closure_end": {
+          "score": 0.0939,
+          "ssim": 0.1878,
+          "orb": 0.0
+        },
+        "peak_frame": 462,
+        "excursion": {
+          "score": 0.0876
+        },
+        "moved": 0.9124,
+        "n_frames": 192
+      },
+      "flags": [],
+      "wall_seconds": 16.02,
+      "n_frames": 598,
+      "gif": "turn_closure.gif",
+      "first_png": "turn_closure_first.png",
+      "last_png": "turn_closure_last.png"
+    }
+  ],
+  "overall": 0.5082
+}

@@ -139,7 +139,7 @@ async function connect() {
       await cmd("set_prompt", { prompt: $("prompt").value }, true);
       await cmd("set_seed", { seed: 42 }, true);
       await cmd("start", {}, true);
-      log("started — turn your head (VR) or use the keyboard");
+      log(xrSupported ? "started — turn your head to look, pinch to walk" : "started — W A S D to move, arrow keys to look");
       $("enter").disabled = !xrSupported;
       $("recenter").disabled = false;
     } catch (e) { log("start failed:", e.message || e); }

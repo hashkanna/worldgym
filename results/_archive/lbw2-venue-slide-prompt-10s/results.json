@@ -1,0 +1,31 @@
+{
+  "model": "reactor/lingbot-world-2",
+  "created": "2026-09-12T15:47:17",
+  "env": {
+    "model": "reactor/lingbot-world-2",
+    "steps": 1,
+    "time_to_first_frame_s": 1.709
+  },
+  "probes": [
+    {
+      "name": "prompt_stability",
+      "score": 0.4887,
+      "details": {
+        "similarity": {
+          "score": 0.6645,
+          "ssim": 0.8402,
+          "orb": 0.4887
+        },
+        "new_prompt": "the same office event space at night, lights off, only the wall TV glowing, photoreal",
+        "n_frames": 480
+      },
+      "flags": [],
+      "wall_seconds": 10.22,
+      "n_frames": 484,
+      "gif": "prompt_stability.gif",
+      "first_png": "prompt_stability_first.png",
+      "last_png": "prompt_stability_last.png"
+    }
+  ],
+  "overall": 0.4887
+}

@@ -7,7 +7,7 @@ Copy each field into https://devpost.com/submit-to/31330-worlds-london/manage/su
 **Elevator pitch** (under 200 characters):
 A test rig for real-time world models: it drives Reactor's models like a player and scores whether the world is still there when you come back. It isn't.
 
-**Try it out:** https://worldgym-900.pages.dev
+**Try it out:** https://worldgym-900.pages.dev · https://github.com/hashkanna/worldgym
 
 **Video demo:** https://worldgym-900.pages.dev/dashboard/exhibits/worldgym-demo.mp4 (or the YouTube link, once uploaded)
 

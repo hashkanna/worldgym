@@ -1,13 +1,9 @@
 # Anchor images
 
-LingBot World 2 is image-anchored: `set_image` fixes the world's visual identity and the
-prompt steers atmosphere. Put 3-4 real, landscape photos here tonight (1664x960 is the
-model's native resolution; anything landscape works):
+The photo a world starts from. LingBot models are image-anchored: `set_image` fixes the world's
+look and the prompt steers it. Landscape photos work best; 1664×960 is LingBot's native size.
 
-- `street.jpg`   a residential street or city corner (default for all scripts)
-- `driving.jpg`  a dashcam-style road view (the Wayve judge builds driving world models)
-- `room.jpg`     an indoor space with obvious landmarks (good for loop-closure probes)
-- `lab.jpg`      a robotics/lab bench (Non-Entertainment track framing)
+- `room.jpg` — the prize slide on the wall at the WORLDS | LONDON venue. Every run in `results/` uses it.
+- `street.jpg` — a synthetic placeholder so the offline scripts have an image to load.
 
-`street.jpg` is a synthetic placeholder so the offline scripts run; replace it.
 Avoid photos of identifiable people.

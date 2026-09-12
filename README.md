@@ -51,6 +51,41 @@ python -m pytest -q                 # 18 offline tests, ~15 s, no credits used
 Everything below works offline first (`--backend fake`), so you can develop the
 harness without spending credits, then flip to the live model.
 
+## Run it on another machine
+
+```bash
+git clone https://github.com/hashkanna/worldgym && cd worldgym
+uv venv --python 3.13 .venv && source .venv/bin/activate && uv pip install -e ".[dev]"
+cp .env.example .env               # paste REACTOR_API_KEY — the key is never committed
+python -m pytest -q                # 18 offline tests
+
+# live probes -> results/<run>/ and dashboard/index.html
+python scripts/run_probes.py --image assets/anchors/room.jpg \
+  --prompt "a large wall-mounted TV showing a hackathon prize slide in a modern office event space, cool daylight, photoreal" \
+  --run my-run
+open dashboard/index.html
+
+# viewer, locally (keyboard: W/A/S/D move, arrows look)
+python webxr/serve.py                                # http://localhost:8000
+cloudflared tunnel --url http://localhost:8000       # optional public https link
+```
+
+The hosted copy on Cloudflare Pages needs none of this: landing page, findings, scorecard and the
+viewer (behind a demo passcode) all run from the Pages site.
+
+## Publish the site (Cloudflare Pages)
+
+```bash
+scripts/build_site.sh                                        # assembles site/ (pages, dashboard, runs, viewer)
+npx wrangler pages deploy site --project-name worldgym       # functions/token.js becomes POST /token
+npx wrangler pages secret put REACTOR_API_KEY --project-name worldgym
+npx wrangler pages secret put DEMO_PASSCODE --project-name worldgym
+```
+
+Rebuild the findings page after editing `dashboard/findings/template.html`: `python dashboard/findings/build.py`.
+Browser helpers (`scripts/browser/`, `npm install` there first): `record_drive.mjs` records a scripted
+drive through the local viewer; `capture_frames.mjs` saves frames and WebRTC stream stats.
+
 ## Tonight (before the hackathon)
 
 1. **Get a Reactor key + credits**, then the one thing that matters most:

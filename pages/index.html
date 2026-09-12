@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WorldGym</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,400..800&family=Martian+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    color-scheme: light;
+    --paper: #f6f6fa;
+    --panel: #ffffff;
+    --ink: #1b1d33;
+    --ink-2: #4b4e6a;
+    --muted: #6e7190;
+    --rule: #dfe0ea;
+    --accent: #4453c9;
+    --sans: "Archivo", "Helvetica Neue", Arial, sans-serif;
+    --mono: "Martian Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --paper: #111325; --panel: #171a2e; --ink: #eceefd; --ink-2: #b6bad8; --muted: #8a8fb2; --rule: #2a2e4a; --accent: #8e9bff;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --paper: #111325; --panel: #171a2e; --ink: #eceefd; --ink-2: #b6bad8; --muted: #8a8fb2; --rule: #2a2e4a; --accent: #8e9bff;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); font-size: 16px; line-height: 1.55; }
+  main { max-width: 44rem; margin: 0 auto; padding-inline: clamp(16px, 5vw, 40px); padding-block: clamp(36px, 9vw, 96px) 48px; display: grid; gap: 36px; }
+  .meta { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin: 0; }
+  h1 { margin: 0; font-stretch: 125%; font-weight: 800; font-size: clamp(2.6rem, 9vw, 4.4rem); line-height: 1; letter-spacing: -0.015em; }
+  .lede { margin: 0; font-size: 1.14rem; color: var(--ink-2); max-width: 36rem; text-wrap: pretty; }
+  .head { display: grid; gap: 18px; }
+  ul { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--rule); }
+  li { border-bottom: 1px solid var(--rule); }
+  a.dest { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 20px; align-items: baseline; padding: 18px 4px; color: inherit; text-decoration: none; }
+  a.dest:hover .name, a.dest:focus-visible .name { color: var(--accent); }
+  a.dest:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+  .name { font-stretch: 112%; font-weight: 700; font-size: 1.2rem; }
+  .path { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+  .what { grid-column: 1 / -1; color: var(--ink-2); font-size: 0.95rem; }
+  footer { color: var(--muted); font-size: 0.85rem; }
+  code { font-family: var(--mono); font-size: 0.85em; }
+</style>
+</head>
+<body>
+<main>
+  <header class="head">
+    <p class="meta">WORLDS | LONDON · 12 Sept 2026 · Reactor</p>
+    <h1>WorldGym</h1>
+    <p class="lede">A test rig for real-time world models. It drives the model the way a player would — walk away, turn around, come back — and scores whether the world is still there.</p>
+  </header>
+  <ul>
+    <li><a class="dest" href="dashboard/findings.html"><span class="name">Does the world come back?</span><span class="path">findings</span><span class="what">What we found on LingBot World 2: scores and frames from two live runs.</span></a></li>
+    <li><a class="dest" href="dashboard/"><span class="name">Scorecard</span><span class="path">dashboard</span><span class="what">Every run and every probe, with a GIF of each, plus the demo videos.</span></a></li>
+    <li><a class="dest" href="webxr/"><span class="name">Drive the world yourself</span><span class="path">viewer</span><span class="what">A live session from a photo of the venue. W A S D to move, arrow keys to look. Asks for the demo passcode.</span></a></li>
+  </ul>
+  <footer>Code: <code>github.com/hashkanna/worldgym</code> (private).</footer>
+</main>
+</body>
+</html>

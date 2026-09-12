@@ -1,0 +1,320 @@
+{
+  "model": "reactor/lingbot-world-2",
+  "created": "2026-09-12T12:12:22",
+  "env": {
+    "model": "reactor/lingbot-world-2",
+    "steps": 5,
+    "time_to_first_frame_s": 1.847
+  },
+  "probes": [
+    {
+      "name": "stillness",
+      "score": 0.8468,
+      "details": {
+        "mean_similarity": 0.8468,
+        "end_similarity": 0.848,
+        "curve": [
+          0.9835,
+          0.8837,
+          0.7876,
+          0.817,
+          0.8727,
+          0.8732,
+          0.8611,
+          0.8759,
+          0.8408,
+          0.8227,
+          0.8316,
+          0.8436,
+          0.8765,
+          0.8726,
+          0.8749,
+          0.8286,
+          0.8377,
+          0.8348,
+          0.8362,
+          0.7953,
+          0.8095,
+          0.8202,
+          0.8126,
+          0.8293,
+          0.848
+        ],
+        "n_frames": 144
+      },
+      "flags": [],
+      "wall_seconds": 3.79,
+      "n_frames": 148,
+      "gif": "stillness.gif",
+      "first_png": "stillness_first.png",
+      "last_png": "stillness_last.png"
+    },
+    {
+      "name": "loop_closure[forward]",
+      "score": 0.1974,
+      "details": {
+        "closure": {
+          "score": 0.1974,
+          "ssim": 0.3949,
+          "orb": 0.0
+        },
+        "closure_end": {
+          "score": 0.1014,
+          "ssim": 0.2028,
+          "orb": 0.0
+        },
+        "peak_frame": 250,
+        "excursion": {
+          "score": 0.2014
+        },
+        "moved": 0.7986,
+        "n_frames": 192
+      },
+      "flags": [],
+      "wall_seconds": 10.77,
+      "n_frames": 501,
+      "gif": "loop_closure_forward.gif",
+      "first_png": "loop_closure_forward_first.png",
+      "last_png": "loop_closure_forward_last.png"
+    },
+    {
+      "name": "rotation_closure",
+      "score": 0.1215,
+      "details": {
+        "closure": {
+          "score": 0.1215,
+          "ssim": 0.1671,
+          "orb": 0.0758
+        },
+        "closure_end": {
+          "score": 0.0966,
+          "ssim": 0.1932,
+          "orb": 0.0
+        },
+        "peak_frame": 214,
+        "min_similarity_during_turn": 0.0885,
+        "curve": [
+          0.9648,
+          0.8338,
+          0.6775,
+          0.6666,
+          0.6605,
+          0.444,
+          0.2943,
+          0.261,
+          0.2052,
+          0.1894,
+          0.1688,
+          0.1511,
+          0.1308,
+          0.1179,
+          0.1121,
+          0.1053,
+          0.1026,
+          0.0934,
+          0.0885,
+          0.0934,
+          0.0959,
+          0.0968,
+          0.102,
+          0.1008,
+          0.1013,
+          0.1019
+        ],
+        "n_frames": 192,
+        "total_deg": 360.0
+      },
+      "flags": [],
+      "wall_seconds": 10.32,
+      "n_frames": 430,
+      "gif": "rotation_closure.gif",
+      "first_png": "rotation_closure_first.png",
+      "last_png": "rotation_closure_last.png"
+    },
+    {
+      "name": "controllability",
+      "score": 1.0,
+      "details": {
+        "per_action": {
+          "forward": {
+            "ok": true,
+            "flow": {
+              "dx": 0.029,
+              "dy": -0.088,
+              "mag": 1.629,
+              "div": 1.231
+            },
+            "expected": {
+              "div": 1
+            },
+            "onset_frame": 92,
+            "fps": 46.7
+          },
+          "back": {
+            "ok": true,
+            "flow": {
+              "dx": 0.181,
+              "dy": 0.115,
+              "mag": 1.098,
+              "div": -1.053
+            },
+            "expected": {
+              "div": -1
+            },
+            "onset_frame": 148,
+            "fps": 47.5
+          },
+          "strafe_left": {
+            "ok": true,
+            "flow": {
+              "dx": 1.538,
+              "dy": -0.066,
+              "mag": 1.546,
+              "div": -0.284
+            },
+            "expected": {
+              "dx": 1
+            },
+            "onset_frame": 160,
+            "fps": 49.3
+          },
+          "strafe_right": {
+            "ok": true,
+            "flow": {
+              "dx": -2.294,
+              "dy": -0.011,
+              "mag": 2.303,
+              "div": -0.05
+            },
+            "expected": {
+              "dx": -1
+            },
+            "onset_frame": 170,
+            "fps": 49.6
+          },
+          "look_left": {
+            "ok": true,
+            "flow": {
+              "dx": 3.72,
+              "dy": 0.038,
+              "mag": 3.815,
+              "div": 1.235
+            },
+            "expected": {
+              "dx": 1
+            },
+            "onset_frame": 142,
+            "fps": 48.8
+          },
+          "look_right": {
+            "ok": true,
+            "flow": {
+              "dx": -3.714,
+              "dy": 0.014,
+              "mag": 3.77,
+              "div": -0.365
+            },
+            "expected": {
+              "dx": -1
+            },
+            "onset_frame": 148,
+            "fps": 48.0
+          }
+        },
+        "mean_onset_frames": 143.33333333333334,
+        "n_frames": 288
+      },
+      "flags": [],
+      "wall_seconds": 68.6,
+      "n_frames": 1825,
+      "gif": "controllability.gif",
+      "first_png": "controllability_first.png",
+      "last_png": "controllability_last.png"
+    },
+    {
+      "name": "loop_closure[pose]",
+      "score": 0.1849,
+      "details": {
+        "closure": {
+          "score": 0.1849,
+          "ssim": 0.3391,
+          "orb": 0.0307
+        },
+        "closure_end": {
+          "score": 0.1207,
+          "ssim": 0.2415,
+          "orb": 0.0
+        },
+        "peak_frame": 219,
+        "excursion": {
+          "score": 0.1813
+        },
+        "moved": 0.8187,
+        "n_frames": 96
+      },
+      "flags": [],
+      "wall_seconds": 9.68,
+      "n_frames": 416,
+      "gif": "loop_closure_pose.gif",
+      "first_png": "loop_closure_pose_first.png",
+      "last_png": "loop_closure_pose_last.png"
+    },
+    {
+      "name": "loop_closure[pose]@tz0.1",
+      "score": 0.2221,
+      "details": {
+        "closure": {
+          "score": 0.2221,
+          "ssim": 0.3658,
+          "orb": 0.0784
+        },
+        "closure_end": {
+          "score": 0.112,
+          "ssim": 0.2239,
+          "orb": 0.0
+        },
+        "peak_frame": 184,
+        "excursion": {
+          "score": 0.1873
+        },
+        "moved": 0.8127,
+        "n_frames": 96
+      },
+      "flags": [],
+      "wall_seconds": 8.47,
+      "n_frames": 370,
+      "gif": "loop_closure_pose__tz0_1.gif",
+      "first_png": "loop_closure_pose__tz0_1_first.png",
+      "last_png": "loop_closure_pose__tz0_1_last.png"
+    },
+    {
+      "name": "loop_closure[pose]@tz0.25",
+      "score": 0.2196,
+      "details": {
+        "closure": {
+          "score": 0.2196,
+          "ssim": 0.3497,
+          "orb": 0.0895
+        },
+        "closure_end": {
+          "score": 0.1199,
+          "ssim": 0.2398,
+          "orb": 0.0
+        },
+        "peak_frame": 188,
+        "excursion": {
+          "score": 0.2351
+        },
+        "moved": 0.7649,
+        "n_frames": 96
+      },
+      "flags": [],
+      "wall_seconds": 8.44,
+      "n_frames": 377,
+      "gif": "loop_closure_pose__tz0_25.gif",
+      "first_png": "loop_closure_pose__tz0_25_first.png",
+      "last_png": "loop_closure_pose__tz0_25_last.png"
+    }
+  ],
+  "overall": 0.3989
+}

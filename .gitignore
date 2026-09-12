@@ -3,10 +3,9 @@
 .venv-*/
 __pycache__/
 *.pyc
-results/*
-!results/notes.html
-dashboard/index.html
-dashboard/exhibits/
 demo/
+site/
+node_modules/
+.wrangler/
 .pytest_cache/
 .DS_Store

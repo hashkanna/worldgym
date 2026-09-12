@@ -1,0 +1,9 @@
+{
+  "name": "worldgym-browser-tools",
+  "private": true,
+  "type": "module",
+  "description": "Headless-Chrome helpers for the viewer: record a scripted drive, capture frames and stream stats",
+  "dependencies": {
+    "playwright-core": "^1.63.0"
+  }
+}

@@ -1,0 +1,478 @@
+<title>Does the world come back?</title>
+<meta name="description" content="WorldGym probe results for LingBot World 2 on Reactor.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,400..800&family=Martian+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    color-scheme: light;
+    --paper: #f6f6fa;
+    --panel: #ffffff;
+    --ink: #1b1d33;
+    --ink-2: #4b4e6a;
+    --muted: #6e7190;
+    --rule: #dfe0ea;
+    --run-a: #c98200;
+    --run-b: #4453c9;
+    --good: #0ca30c;
+    --critical: #d03b3b;
+    --sans: "Archivo", "Helvetica Neue", Arial, sans-serif;
+    --mono: "Martian Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --paper: #111325;
+      --panel: #171a2e;
+      --ink: #eceefd;
+      --ink-2: #b6bad8;
+      --muted: #8a8fb2;
+      --rule: #2a2e4a;
+      --run-a: #c38612;
+      --run-b: #6f7ef0;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --paper: #111325;
+    --panel: #171a2e;
+    --ink: #eceefd;
+    --ink-2: #b6bad8;
+    --muted: #8a8fb2;
+    --rule: #2a2e4a;
+    --run-a: #c38612;
+    --run-b: #6f7ef0;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.55;
+  }
+  .page {
+    max-width: 62rem;
+    margin: 0 auto;
+    padding-inline: clamp(16px, 4vw, 40px);
+    padding-block: clamp(28px, 6vw, 64px) 56px;
+    display: grid;
+    gap: clamp(44px, 7vw, 76px);
+  }
+
+  h1, h2, h3 { margin: 0; text-wrap: balance; color: var(--ink); }
+  h1 {
+    font-stretch: 125%;
+    font-weight: 800;
+    font-size: clamp(2.3rem, 6.2vw, 4.1rem);
+    line-height: 1.02;
+    letter-spacing: -0.015em;
+  }
+  h2 { font-stretch: 125%; font-weight: 750; font-size: 1.45rem; line-height: 1.2; }
+  h3 { font-stretch: 112%; font-weight: 700; font-size: 1.12rem; line-height: 1.3; }
+  p { margin: 0; }
+
+  .meta, .label {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* header */
+  .head { display: grid; gap: 22px; }
+  .lede { max-width: 40rem; font-size: 1.14rem; color: var(--ink-2); }
+  .lede strong { color: var(--ink); font-weight: 600; }
+  .spec {
+    margin: 6px 0 0;
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: 8px 22px;
+    padding-top: 18px;
+    border-top: 1px solid var(--rule);
+    max-width: 48rem;
+  }
+  .spec div { display: contents; }
+  .spec dt { padding-top: 3px; }
+  .spec dd { margin: 0; color: var(--ink-2); font-size: 0.95rem; }
+
+  .sec-head { display: grid; gap: 8px; margin-bottom: 22px; }
+  .sec-head p { max-width: 40rem; color: var(--ink-2); }
+
+  /* scoreboard */
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: clamp(14px, 3vw, 24px);
+  }
+  .legend { display: flex; flex-wrap: wrap; gap: 8px 22px; margin-bottom: 14px; font-size: 0.9rem; color: var(--ink-2); }
+  .key { display: inline-flex; align-items: center; gap: 8px; }
+  .swatch { display: inline-block; flex: none; border-radius: 50%; }
+  .swatch.a { width: 14px; height: 14px; border: 3px solid var(--run-a); }
+  .swatch.b { width: 10px; height: 10px; background: var(--run-b); }
+
+  .row {
+    display: grid;
+    grid-template-columns: minmax(10rem, 12.5rem) minmax(0, 1fr) 6.5rem 9rem;
+    grid-template-areas: "probe track vals verdict";
+    align-items: center;
+    gap: 10px 18px;
+    padding-block: 14px;
+    border-top: 1px solid var(--rule);
+  }
+  .row.axis { border-top: 0; padding-block: 0 8px; }
+  .probe { grid-area: probe; display: grid; gap: 2px; }
+  .probe .name { font-weight: 600; }
+  .probe .how { font-size: 0.82rem; color: var(--muted); }
+  .track, .scale { grid-area: track; position: relative; margin-inline: 10px; }
+  .track {
+    height: 30px;
+    background-image: linear-gradient(to right, var(--rule) 1px, transparent 1px);
+    background-size: 25% 100%;
+    box-shadow: inset -1px 0 var(--rule);
+  }
+  .scale { height: 16px; }
+  .scale span {
+    position: absolute;
+    left: calc(var(--x) * 100%);
+    transform: translateX(-50%);
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .dot {
+    position: absolute;
+    top: 50%;
+    left: calc(var(--x) * 100%);
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    padding: 0;
+    cursor: default;
+  }
+  .dot::before { content: ""; position: absolute; inset: -9px; border-radius: 50%; }
+  .dot.a { width: 18px; height: 18px; border: 3px solid var(--run-a); background: var(--panel); }
+  .dot.b { width: 12px; height: 12px; border: 2px solid var(--panel); background: var(--run-b); }
+  .dot:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+  .vals {
+    grid-area: vals;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    text-align: right;
+    font-family: var(--mono);
+    font-size: 0.9rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .vals .none { color: var(--muted); }
+  .axis .vals, .axis .vh { font-family: var(--mono); font-size: 11px; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; }
+  .vh { grid-area: verdict; }
+  .verdict {
+    grid-area: verdict;
+    justify-self: start;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 3px 10px 3px 8px;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    white-space: nowrap;
+    color: var(--ink);
+    border: 1px solid color-mix(in srgb, var(--status) 55%, transparent);
+    background: color-mix(in srgb, var(--status) 12%, var(--panel));
+  }
+  .verdict .ic { color: var(--status); font-weight: 700; }
+  .verdict.good { --status: var(--good); }
+  .verdict.bad { --status: var(--critical); }
+
+  .table-view { margin-top: 16px; font-size: 0.9rem; }
+  .table-view summary { cursor: pointer; color: var(--ink-2); width: max-content; }
+  .table-view summary:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+  .scroll { overflow-x: auto; margin-top: 12px; }
+  table { border-collapse: collapse; min-width: 34rem; width: 100%; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  th { font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+  td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+  .tip {
+    position: fixed;
+    z-index: 5;
+    max-width: 18rem;
+    padding: 7px 10px;
+    border-radius: 5px;
+    background: var(--ink);
+    color: var(--paper);
+    font-size: 0.8rem;
+    line-height: 1.4;
+    pointer-events: none;
+  }
+
+  /* contact sheets */
+  .sheets { display: grid; gap: clamp(36px, 6vw, 56px); }
+  .sheet { display: grid; gap: 16px; }
+  .sheet .how { max-width: 44rem; color: var(--ink-2); font-size: 0.95rem; margin-top: 6px; }
+  kbd {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    padding: 0 5px;
+    border: 1px solid var(--rule);
+    border-bottom-width: 2px;
+    border-radius: 4px;
+    background: var(--panel);
+    color: var(--ink);
+  }
+  .frames {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 18px 14px;
+    grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+  }
+  .frames.three { --cols: 3; }
+  .frames.four { --cols: 4; }
+  figure { margin: 0; display: grid; gap: 8px; align-content: start; }
+  figure img {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    aspect-ratio: 1664 / 960;
+    object-fit: cover;
+    border-radius: 3px;
+    background: var(--rule);
+  }
+  figcaption { font-size: 0.86rem; line-height: 1.4; color: var(--ink-2); display: grid; gap: 3px; }
+  .tc { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; font-family: var(--mono); font-size: 11px; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .tc .what { color: var(--muted); }
+  .score {
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 0 6px;
+    border-radius: 3px;
+    border: 1px solid color-mix(in srgb, var(--critical) 55%, transparent);
+    background: color-mix(in srgb, var(--critical) 10%, var(--paper));
+    color: var(--ink);
+  }
+
+  /* method */
+  .method { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 40px; }
+  .defs { margin: 0; display: grid; gap: 16px; }
+  .defs dt { font-weight: 600; }
+  .defs dd { margin: 3px 0 0; color: var(--ink-2); font-size: 0.95rem; }
+  .notes { margin: 0; padding-left: 1.1em; display: grid; gap: 12px; color: var(--ink-2); font-size: 0.95rem; }
+  .notes li::marker { color: var(--muted); }
+  .method h3 { margin-bottom: 14px; }
+  code { font-family: var(--mono); font-size: 0.82em; }
+
+  footer { border-top: 1px solid var(--rule); padding-top: 18px; color: var(--muted); font-size: 0.85rem; max-width: 48rem; }
+
+  @media (max-width: 820px) {
+    .frames.four { --cols: 2; }
+    .method { grid-template-columns: minmax(0, 1fr); }
+  }
+  @media (max-width: 640px) {
+    .row {
+      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-areas: "probe verdict" "track track" "vals vals";
+    }
+    .row.axis { grid-template-areas: "track track"; }
+    .axis .vals, .axis .vh { display: none; }
+    .vals { grid-template-columns: auto auto; justify-content: start; gap: 18px; text-align: left; }
+    .vals span::before { font-size: 11px; color: var(--muted); margin-right: 6px; }
+    .vals span:first-child::before { content: "A"; }
+    .vals span:last-child::before { content: "B"; }
+    .frames.three { --cols: 2; }
+    .spec { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+    .spec dd { margin-bottom: 10px; }
+  }
+</style>
+
+<main class="page">
+  <header class="head">
+    <p class="meta">Reactor · reactor/lingbot-world-2 · WORLDS | LONDON · 12 Sept 2026</p>
+    <h1>Does the world come back?</h1>
+    <p class="lede">We drove a live world model through a Gym-style harness. <strong>Every control moved the scene the right way.</strong> But walk four seconds forward and back, or turn away and look back, and <strong>the room you return to is not the room you left.</strong></p>
+    <dl class="spec">
+      <div><dt class="label">Anchor</dt><dd>A photo of the prize slide on the wall at the venue</dd></div>
+      <div><dt class="label">Prompt</dt><dd>“a large wall-mounted TV showing a hackathon prize slide in a modern office event space, cool daylight, photoreal”</dd></div>
+      <div><dt class="label">Seed</dt><dd>42</dd></div>
+      <div><dt class="label">Frames</dt><dd>1664 × 960 at 44–48 fps, scored at 320 px wide</dd></div>
+      <div><dt class="label">Similarity</dt><dd>½ SSIM + ½ ORB inlier ratio, from 0 (unrelated) to 1 (identical)</dd></div>
+    </dl>
+  </header>
+
+  <section aria-labelledby="scores-h">
+    <div class="sec-head">
+      <h2 id="scores-h">Scores</h2>
+      <p>Everything runs from 0 to 1. For the controls, it’s the share of actions that moved the scene the expected way; for the rest, how closely the view matches where the probe started.</p>
+    </div>
+    <div class="panel">
+      <div class="legend">
+        <span class="key"><i class="swatch a"></i>Run A · full suite, 14:17</span>
+        <span class="key"><i class="swatch b"></i>Run B · closure probes only, nothing else running, 14:21</span>
+      </div>
+
+      <div class="row axis" aria-hidden="true">
+        <div class="scale"><span style="--x:0">0</span><span style="--x:.25">0.25</span><span style="--x:.5">0.5</span><span style="--x:.75">0.75</span><span style="--x:1">1</span></div>
+        <div class="vals"><span>A</span><span>B</span></div>
+        <div class="vh">Verdict</div>
+      </div>
+
+      <div class="row">
+        <div class="probe"><span class="name">Controls respond</span><span class="how">6 actions, 240 frames each</span></div>
+        <div class="track">
+          <button class="dot a" style="--x:1" data-tip="Run A · 1.00 · all 6 actions moved the scene the expected way; motion starts about 2–3 s after the command" aria-label="Run A: 1.00"></button>
+        </div>
+        <div class="vals"><span>1.00</span><span class="none">—</span></div>
+        <div class="verdict good"><span class="ic" aria-hidden="true">✓</span>responds</div>
+      </div>
+
+      <div class="row">
+        <div class="probe"><span class="name">Standing still</span><span class="how">144 frames idle</span></div>
+        <div class="track">
+          <button class="dot a" style="--x:.8362" data-tip="Run A · 0.84 · mean similarity to the first frame" aria-label="Run A: 0.84"></button>
+          <button class="dot b" style="--x:.8364" data-tip="Run B · 0.84 · mean similarity to the first frame" aria-label="Run B: 0.84"></button>
+        </div>
+        <div class="vals"><span>0.84</span><span>0.84</span></div>
+        <div class="verdict good"><span class="ic" aria-hidden="true">✓</span>holds</div>
+      </div>
+
+      <div class="row">
+        <div class="probe"><span class="name">Turn away and back</span><span class="how">look left 192 f, right 192 f</span></div>
+        <div class="track">
+          <button class="dot a" style="--x:.1311" data-tip="Run A · 0.13 · SSIM 0.26 · ORB 0.00" aria-label="Run A: 0.13"></button>
+          <button class="dot b" style="--x:.1688" data-tip="Run B · 0.17 · SSIM 0.23 · ORB 0.11" aria-label="Run B: 0.17"></button>
+        </div>
+        <div class="vals"><span>0.13</span><span>0.17</span></div>
+        <div class="verdict bad"><span class="ic" aria-hidden="true">✕</span>doesn’t return</div>
+      </div>
+
+      <div class="row">
+        <div class="probe"><span class="name">Walk forward and back</span><span class="how">forward 192 f, back 192 f</span></div>
+        <div class="track">
+          <button class="dot a" style="--x:.0722" data-tip="Run A · 0.07 · SSIM 0.14 · ORB 0.00" aria-label="Run A: 0.07"></button>
+          <button class="dot b" style="--x:.1830" data-tip="Run B · 0.18 · SSIM 0.35 · ORB 0.02" aria-label="Run B: 0.18"></button>
+        </div>
+        <div class="vals"><span>0.07</span><span>0.18</span></div>
+        <div class="verdict bad"><span class="ic" aria-hidden="true">✕</span>doesn’t return</div>
+      </div>
+
+      <details class="table-view">
+        <summary>Show the numbers as a table</summary>
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Probe</th><th>Run A</th><th>Run B</th><th>SSIM A / B</th><th>ORB A / B</th></tr></thead>
+            <tbody>
+              <tr><td>Controls respond</td><td class="num">1.00</td><td class="num">—</td><td colspan="2">6 of 6 actions correct · onset ≈ 119 frames</td></tr>
+              <tr><td>Standing still</td><td class="num">0.84</td><td class="num">0.84</td><td colspan="2">mean similarity over 144 frames</td></tr>
+              <tr><td>Turn away and back</td><td class="num">0.13</td><td class="num">0.17</td><td class="num">0.26 / 0.23</td><td class="num">0.00 / 0.11</td></tr>
+              <tr><td>Walk forward and back</td><td class="num">0.07</td><td class="num">0.18</td><td class="num">0.14 / 0.35</td><td class="num">0.00 / 0.02</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <section aria-labelledby="sheets-h">
+    <div class="sec-head">
+      <h2 id="sheets-h">Contact sheets</h2>
+      <p>Frames straight from the sessions. Probe frame numbers count from the start of that probe.</p>
+    </div>
+    <div class="sheets">
+      <article class="sheet">
+        <header>
+          <h3>Walk into the slide</h3>
+          <p class="how">A 32-second drive in the browser viewer, same photo and prompt: <kbd>W</kbd> from 3 s, <kbd>←</kbd> from 9 s, <kbd>→</kbd> from 15 s, <kbd>S</kbd> from 23 s.</p>
+        </header>
+        <ol class="frames three">
+          <li><figure><img src="{{walk_0.5}}" alt="The prize slide on a wall-mounted TV"><figcaption><span class="tc">0.5 s <span class="what">start</span></span>The prize slide, as photographed.</figcaption></figure></li>
+          <li><figure><img src="{{walk_4.5}}" alt="The same slide, unchanged"><figcaption><span class="tc">4.5 s <span class="what">W held 1.5 s</span></span>Still the slide: commands land 2–3 s late.</figcaption></figure></li>
+          <li><figure><img src="{{walk_6.0}}" alt="Inside a blue space with a silhouetted figure"><figcaption><span class="tc">6.0 s <span class="what">W held 3 s</span></span>Into the screen. A silhouette in the glass becomes a figure.</figcaption></figure></li>
+          <li><figure><img src="{{walk_9.0}}" alt="A glowing X logo filling the frame"><figcaption><span class="tc">9.0 s <span class="what">W held 6 s</span></span>Walking on, straight into the figure — a glowing logo fills the view.</figcaption></figure></li>
+          <li><figure><img src="{{walk_12.0}}" alt="An office with desks next to a blue glass wall"><figcaption><span class="tc">12.0 s <span class="what">← held 3 s</span></span>Out the other side, into an office that wasn’t in the photo.</figcaption></figure></li>
+          <li><figure><img src="{{walk_25.5}}" alt="A bright office with a wall TV showing garbled graphics"><figcaption><span class="tc">25.5 s <span class="what">S held 2.5 s</span></span>Backing away doesn’t undo it: a new room, a new screen, garbled text.</figcaption></figure></li>
+        </ol>
+      </article>
+
+      <article class="sheet">
+        <header>
+          <h3>Walk forward and back</h3>
+          <p class="how">Run B: hold forward for 192 frames, back for 192, then idle for 192. The score is the closest any frame on the way back got to frame 0.</p>
+        </header>
+        <ol class="frames four">
+          <li><figure><img src="{{loop_0}}" alt="The prize slide"><figcaption><span class="tc">f 0 <span class="what">start</span></span>The slide.</figcaption></figure></li>
+          <li><figure><img src="{{loop_48}}" alt="Close up against a dark screen with a reflection"><figcaption><span class="tc">f 192 <span class="what">after forward</span></span>Up against the screen.</figcaption></figure></li>
+          <li><figure><img src="{{loop_77}}" alt="A dark blue room with a standing figure"><figcaption><span class="tc">f 308 <span class="what">closest return</span> <span class="score">0.18</span></span>A dark room with a figure in it.</figcaption></figure></li>
+          <li><figure><img src="{{loop_152}}" alt="An open office with a large screen"><figcaption><span class="tc">f 608 <span class="what">back and settled</span></span>An open office. The slide never returns.</figcaption></figure></li>
+        </ol>
+      </article>
+
+      <article class="sheet">
+        <header>
+          <h3>Turn away and back</h3>
+          <p class="how">Run B, starting where the walk ended: look left for 192 frames, right for 192, then idle. Both legs use the same command at the same speed.</p>
+        </header>
+        <ol class="frames four">
+          <li><figure><img src="{{turn_0}}" alt="An open office with a pink slide on a wall screen"><figcaption><span class="tc">f 0 <span class="what">start</span></span>Open office, pink slide on the wall screen.</figcaption></figure></li>
+          <li><figure><img src="{{turn_48}}" alt="Desks with the pink screen off to the right"><figcaption><span class="tc">f 192 <span class="what">after left</span></span>Desks, with the pink screen off to the right.</figcaption></figure></li>
+          <li><figure><img src="{{turn_96}}" alt="A wide office with glass meeting rooms"><figcaption><span class="tc">f 384 <span class="what">after right</span></span>A wider room than the one we left.</figcaption></figure></li>
+          <li><figure><img src="{{turn_125}}" alt="A wall screen now showing a landscape"><figcaption><span class="tc">f 500 <span class="what">closest match</span> <span class="score">0.17</span></span>The screen is back — now showing a landscape.</figcaption></figure></li>
+        </ol>
+      </article>
+    </div>
+  </section>
+
+  <section class="method" aria-label="Method and caveats">
+    <div>
+      <h3>How the probes work</h3>
+      <dl class="defs">
+        <div><dt>Controls respond</dt><dd>Hold each of six actions and measure optical flow. An action passes if the scene moves the expected way — strafe left, scene slides right; walk forward, scene expands.</dd></div>
+        <div><dt>Standing still</dt><dd>Hold idle for 144 frames; score the mean similarity to the first frame.</dd></div>
+        <div><dt>Walk forward and back · Turn away and back</dt><dd>Out for 192 frames, back for 192, then 192 frames of idle — longer than the 2–3 s command lag — and score the best match to the start over the return half.</dd></div>
+        <div><dt>Similarity</dt><dd>Half SSIM, half the share of ORB features that match after RANSAC. Strict on purpose, which is why standing still is the baseline to read against.</dd></div>
+      </dl>
+    </div>
+    <div>
+      <h3>What we threw out</h3>
+      <ul class="notes">
+        <li>A 360° turn through <code>set_camera_pose</code>. On LingBot World 2 the pose is a per-latent-frame velocity bias, not a camera rig, so the “full turn” fell far short of a circle and its score measured a partial pan.</li>
+        <li>A walk test that settled for only 96 frames. With commands landing 2–3 s late, the return leg was cut off before it finished.</li>
+        <li>Run A shared the machine with a second session during the controls probe, so its frame rate dipped. Run B ran on its own.</li>
+      </ul>
+      <h3 style="margin-top:28px">Also seen</h3>
+      <ul class="notes">
+        <li>Once you move, the prompt beats the photo: the same slide photo with a “quiet residential street” prompt turns into a street within seconds.</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>WorldGym, built at WORLDS | LONDON on 12 Sept 2026. Runs <code>lbw2-venue-slide</code> and <code>lbw2-venue-slide-2</code>. The same model also runs head-tracked on an Apple Vision Pro through WorldXR.</footer>
+</main>
+<div id="tip" class="tip" role="tooltip" hidden></div>
+
+<script>
+  const tip = document.getElementById("tip");
+  function show(dot) {
+    tip.textContent = dot.dataset.tip;
+    tip.hidden = false;
+    const r = dot.getBoundingClientRect();
+    const w = tip.offsetWidth, h = tip.offsetHeight;
+    const left = Math.min(Math.max(8, r.left + r.width / 2 - w / 2), innerWidth - w - 8);
+    const top = r.top - h - 10 < 8 ? r.bottom + 10 : r.top - h - 10;
+    tip.style.left = left + "px";
+    tip.style.top = top + "px";
+  }
+  function hide() { tip.hidden = true; }
+  document.querySelectorAll(".dot").forEach((dot) => {
+    dot.addEventListener("mouseenter", () => show(dot));
+    dot.addEventListener("focus", () => show(dot));
+    dot.addEventListener("mouseleave", hide);
+    dot.addEventListener("blur", hide);
+  });
+  addEventListener("scroll", hide, { passive: true });
+</script>

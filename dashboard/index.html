@@ -1,0 +1,45 @@
+<!doctype html><meta charset=utf-8><title>WorldGym scorecard</title><style>
+:root{--bg:#0e0f12;--card:#17191f;--ink:#e8e8ea;--mut:#9a9ca6;--good:#3fb950;--mid:#d29922;--bad:#f85149;--line:#2a2d36}
+*{box-sizing:border-box}body{margin:0;padding:24px;background:var(--bg);color:var(--ink);font:14px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+h1{font-size:22px;margin:0 0 4px}h2{font-size:16px;margin:24px 0 8px}p.sub{color:var(--mut);margin:0 0 20px}
+table{border-collapse:collapse;width:100%;max-width:1100px}th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--mut);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+.score{font-variant-numeric:tabular-nums;font-weight:700}.g{color:var(--good)}.m{color:var(--mid)}.b{color:var(--bad)}
+.bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden;width:120px}.bar i{display:block;height:100%}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px;max-width:1100px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px}
+.card img,.card video{width:100%;border-radius:6px;background:#000}.card .row{display:flex;gap:8px;margin-top:8px}.card .row img{width:50%}
+.k{color:var(--mut);font-size:12px}code{background:#22252d;padding:1px 5px;border-radius:4px;font-size:12px}
+.flag{display:inline-block;background:#3a2a10;color:#f0b64a;padding:1px 6px;border-radius:4px;font-size:11px;margin-left:6px}
+</style>
+<h1>WorldGym scorecard</h1><p class=sub>Physics-consistency probes for real-time world models. Scores in [0,1]; higher is more consistent/controllable.</p>
+<h2>What we found</h2>
+<p class=k>reactor/lingbot-world-2, anchored on a photo of the prize slide at the venue, seed 42. Similarity = ½ SSIM + ½ ORB inlier ratio on 320-px greyscale frames.</p>
+<div class=grid>
+  <div class=card><b>Controls: right, but late</b><div class=k>All 6 actions moved the scene the right way. Motion starts ~2–3 s after the command.</div></div>
+  <div class=card><b>Standing still holds</b><div class=k>0.84 similarity to the start frame in both runs — the baseline for everything else.</div></div>
+  <div class=card><b>Walk forward and back: you don't get home</b><div class=k>0.07 and 0.18. Walking into the TV takes you through the screen into another office; walking back never returns the first room.</div></div>
+  <div class=card><b>Turn away and back: a similar room, not the same one</b><div class=k>0.13 and 0.17. When you look back, the room is the same kind of room but not the same view.</div></div>
+</div>
+<h2>Exhibits</h2>
+<div class=grid>
+  <div class=card><b>Walk into the slide</b> <span class=k>matching prompt · 32 s</span><video src="exhibits/walk-into-the-slide.mp4" controls muted loop playsinline preload="metadata"></video></div>
+  <div class=card><b>Backup drive</b> <span class=k>"residential street" prompt · 32 s</span><video src="exhibits/backup-drive.mp4" controls muted loop playsinline preload="metadata"></video></div>
+</div>
+<p class=k>Run <code>lbw2-venue-slide</code> shared the Mac with a second session during controllability, so its frame rate dipped; <code>lbw2-venue-slide-2</code> ran alone. Older runs are in <code>results/_archive</code> — their rotation score used <code>set_camera_pose</code>, which turned far less than 360°, and their loop test stopped before the lag-delayed return finished.</p>
+
+<table><tr><th>Run</th><th>Model</th><th>Overall</th><th>stillness</th><th>controllability</th><th>loop_closure[forward]</th><th>turn_closure</th></tr>
+<tr><td><code>lbw2-venue-slide</code><br><span class=k>2026-09-12T14:17:34</span></td><td>reactor/lingbot-world-2</td><td><span class='score m'>0.51</span></td><td><span class="score g">0.84</span><div class="bar"><i style="width:83%;background:var(--good)"></i></div></td><td><span class="score g">1.00</span><div class="bar"><i style="width:100%;background:var(--good)"></i></div></td><td><span class="score b">0.07</span><div class="bar"><i style="width:7%;background:var(--bad)"></i></div></td><td><span class="score b">0.13</span><div class="bar"><i style="width:13%;background:var(--bad)"></i></div></td></tr>
+<tr><td><code>lbw2-venue-slide-2</code><br><span class=k>2026-09-12T14:21:36</span></td><td>reactor/lingbot-world-2</td><td><span class='score b'>0.40</span></td><td><span class="score g">0.84</span><div class="bar"><i style="width:83%;background:var(--good)"></i></div></td><td class=k>—</td><td><span class="score b">0.18</span><div class="bar"><i style="width:18%;background:var(--bad)"></i></div></td><td><span class="score b">0.17</span><div class="bar"><i style="width:16%;background:var(--bad)"></i></div></td></tr>
+</table>
+<h2>lbw2-venue-slide · reactor/lingbot-world-2</h2><p class=k>time to first frame: 1.698 s · steps: 19</p><div class=grid>
+<div class=card><b>stillness</b> <span class='score g'>0.84</span><div class=k>mean 0.84 · end 0.82 · 3.81s · 151 frames</div><img src="../results/lbw2-venue-slide/stillness.gif" loading=lazy><div class=row><img src="../results/lbw2-venue-slide/stillness_first.png"><img src="../results/lbw2-venue-slide/stillness_last.png"></div></div>
+<div class=card><b>controllability</b> <span class='score g'>1.00</span><div class=k>forward✓ back✓ strafe_left✓ strafe_right✓ look_left✓ look_right✓ · onset ≈ 119 frames · 122.28s · 1467 frames</div><img src="../results/lbw2-venue-slide/controllability.gif" loading=lazy><div class=row><img src="../results/lbw2-venue-slide/controllability_first.png"><img src="../results/lbw2-venue-slide/controllability_last.png"></div></div>
+<div class=card><b>loop_closure[forward]</b> <span class='score b'>0.07</span><div class=k>closure 0.07 (ssim 0.14, orb 0.00) · moved 0.93 · 13.56s · 607 frames</div><img src="../results/lbw2-venue-slide/loop_closure_forward.gif" loading=lazy><div class=row><img src="../results/lbw2-venue-slide/loop_closure_forward_first.png"><img src="../results/lbw2-venue-slide/loop_closure_forward_last.png"></div></div>
+<div class=card><b>turn_closure</b> <span class='score b'>0.13</span><div class=k>closure 0.13 (ssim 0.26, orb 0.00) · moved 0.91 · 18.69s · 591 frames</div><img src="../results/lbw2-venue-slide/turn_closure.gif" loading=lazy><div class=row><img src="../results/lbw2-venue-slide/turn_closure_first.png"><img src="../results/lbw2-venue-slide/turn_closure_last.png"></div></div>
+</div>
+<h2>lbw2-venue-slide-2 · reactor/lingbot-world-2</h2><p class=k>time to first frame: 1.597 s · steps: 7</p><div class=grid>
+<div class=card><b>stillness</b> <span class='score g'>0.84</span><div class=k>mean 0.84 · end 0.84 · 3.88s · 151 frames</div><img src="../results/lbw2-venue-slide-2/stillness.gif" loading=lazy><div class=row><img src="../results/lbw2-venue-slide-2/stillness_first.png"><img src="../results/lbw2-venue-slide-2/stillness_last.png"></div></div>
+<div class=card><b>loop_closure[forward]</b> <span class='score b'>0.18</span><div class=k>closure 0.18 (ssim 0.35, orb 0.02) · moved 0.82 · 13.71s · 609 frames</div><img src="../results/lbw2-venue-slide-2/loop_closure_forward.gif" loading=lazy><div class=row><img src="../results/lbw2-venue-slide-2/loop_closure_forward_first.png"><img src="../results/lbw2-venue-slide-2/loop_closure_forward_last.png"></div></div>
+<div class=card><b>turn_closure</b> <span class='score b'>0.17</span><div class=k>closure 0.17 (ssim 0.23, orb 0.11) · moved 0.92 · 14.72s · 613 frames</div><img src="../results/lbw2-venue-slide-2/turn_closure.gif" loading=lazy><div class=row><img src="../results/lbw2-venue-slide-2/turn_closure_first.png"><img src="../results/lbw2-venue-slide-2/turn_closure_last.png"></div></div>
+</div>

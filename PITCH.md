@@ -40,7 +40,8 @@ now it's a number you can track across models and versions."
 - Tab 1: the public trycloudflare link → Connect & start about a minute before the judges arrive;
   wait for "started". A 429 / "no available capacity" error means Reactor is full: wait ~10 s and click again.
 - Tab 2: the findings page (artifact link) or `dashboard/index.html`.
-- Fallback: `demo/backup-venue.mp4` (walks through the screen) or `demo/backup-room.mp4` (street).
+- Fallback: `dashboard/exhibits/walk-into-the-slide.mp4` (walks through the screen) or
+  `dashboard/exhibits/backup-drive.mp4` (street).
 
 **Live (2–3 minutes)**
 1. Keyboard to the judge: "Hold W for five seconds." Point out the lag, then the walk through the screen.

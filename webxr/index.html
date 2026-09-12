@@ -92,11 +92,26 @@ async function cmd(name, params, force = false) {
   try { await reactor.sendCommand(name, params); } catch (e) { log("cmd error", name, e.message || e); }
 }
 
+// The hosted copy (Cloudflare Pages) asks for a demo passcode; the local serve.py doesn't.
+async function getToken() {
+  let saved = "";
+  try { saved = localStorage.getItem("worldgym-passcode") || ""; } catch {}
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const passcode = attempt === 0 ? saved : (prompt("Passcode for this demo") || "");
+    const r = await fetch("/token", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ model: MODEL, passcode }) });
+    const tok = await r.json();
+    if (r.status !== 401) {
+      if (tok.jwt && passcode) try { localStorage.setItem("worldgym-passcode", passcode); } catch {}
+      return tok;
+    }
+  }
+  return { error: "wrong passcode" };
+}
+
 async function connect() {
   $("connect").disabled = true;
   const { Reactor } = await import(SDK_URL);
-  const r = await fetch("/token", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ model: MODEL }) });
-  const tok = await r.json();
+  const tok = await getToken();
   if (!tok.jwt) { log("token error:", JSON.stringify(tok)); $("connect").disabled = false; return; }
   reactor = new Reactor({ modelName: MODEL });
   reactor.on("trackReceived", (name, track) => {
